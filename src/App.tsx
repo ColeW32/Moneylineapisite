@@ -178,50 +178,46 @@ function HomePage() {
 
   return (
     <div className="relative min-h-screen bg-[#f5f2eb] text-[#1a1a1a]">
-      {/* Navigation + Hero title: logo and headline tops aligned */}
-      <header className="relative z-20 max-w-6xl mx-auto px-6 pt-5 pb-4">
-        <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
-          <div className="flex items-start gap-4 min-w-0 flex-1 lg:flex-initial lg:max-w-2xl">
-            <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline shrink-0 pt-[0.05em]">
-              <span>Money</span>
-              <span
-                className={`inline-block min-w-[0.5em] px-[0.2em] text-center transition-opacity duration-150 ${
-                  slashVisible ? "opacity-100" : "opacity-0"
-                }`}
-                aria-hidden
-              >
-                \
-              </span>
-              <span>Line</span>
-            </a>
-            <h1 className="mt-0 pt-0 text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] min-w-0">
-              Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
-            </h1>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a] shrink-0 pt-[0.2em]">
-            <a href="#" className="hover:opacity-70 transition-opacity">
-              API
-            </a>
-            <a href="#" className="hover:opacity-70 transition-opacity">
-              Docs
-            </a>
-            <a href="/pricing" className="hover:opacity-70 transition-opacity">
-              Pricing
-            </a>
-            <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
-              Try API
-              <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
-            </button>
-          </div>
+      {/* Navigation */}
+      <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+        <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
+          <span>Money</span>
+          <span
+            className={`inline-block min-w-[0.5em] px-[0.2em] text-center transition-opacity duration-150 ${
+              slashVisible ? "opacity-100" : "opacity-0"
+            }`}
+            aria-hidden
+          >
+            \
+          </span>
+          <span>Line</span>
+        </a>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
+          <a href="#" className="hover:opacity-70 transition-opacity">
+            API
+          </a>
+          <a href="#" className="hover:opacity-70 transition-opacity">
+            Docs
+          </a>
+          <a href="/pricing" className="hover:opacity-70 transition-opacity">
+            Pricing
+          </a>
+          <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
+            Try API
+            <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
+          </button>
         </div>
-      </header>
+      </nav>
 
       <main className="relative z-10">
-        {/* Hero: CTAs + right column */}
-        <section className="max-w-6xl mx-auto px-6 pt-2 pb-12 lg:pb-16">
+        {/* Hero: headline top-aligned with right column subtext */}
+        <section className="max-w-6xl mx-auto px-6 pt-4 pb-12 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div>
-              <div className="mt-0 flex flex-col sm:flex-row gap-3 sm:items-center">
+              <h1 className="mt-0 pt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] -mt-0.5">
+                Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
+              </h1>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
                 <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
                   Get API Key
                 </a>
@@ -233,8 +229,8 @@ function HomePage() {
                 Trusted by DFS operators, Sportsbooks, Sports data analytics platforms, and Quant funds.
               </p>
             </div>
-            <div>
-              <p className="text-lg text-[#4a4a4a] leading-relaxed lg:pb-1">
+            <div className="pt-1">
+              <p className="mt-0 text-lg text-[#4a4a4a] leading-relaxed lg:pb-1">
                 MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for quants, traders, and product teams.
               </p>
               {/* Endpoint selector */}
