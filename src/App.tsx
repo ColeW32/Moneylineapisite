@@ -55,31 +55,237 @@ const API_ENDPOINTS = [
 ] as const;
 
 const HERO_SNIPPETS_BY_ENDPOINT = [
-  `GET /v1/arbitrage\n\n// Response\n{"pairs":[{"book_a":"DK","book_b":"FD","edge":2.1,"sport":"nba"}],"updated_ms":31}`,
-  `GET /v1/ev/nba?market=moneyline\n\n// Response\n{"market":"moneyline","ev":4.7,"books":["pinnacle","draftkings"],"updated_ms":52}`,
-  `GET /v1/odds/nba?markets=moneyline,ev&books=all\n\n// Response — 84ms\n{"game":"Lakers vs. Celtics","status":"live","moneyline":{"draftkings":-108,"fanduel":-112,"pinnacle":-106},"ev":4.7,"best_line":"pinnacle","arbitrage":true,"updated_ms":84}`,
-  `GET /v1/props/nba?player=lebron&prop=points\n\n// Response\n{"player":"LeBron James","prop":"points","lines":{"over":24.5,"under":24.5},"books":["draftkings","fanduel"],"updated_ms":67}`,
-  `GET /v1/scores/nba\n\n// Response\n{"game_id":"nba_lal_bos_20260309","home_score":98,"away_score":102,"quarter":4,"clock":"2:34","status":"live"}`,
-  `WSS /v1/stream\n\n// Response (stream)\n{"type":"line_update","game_id":"nba_lal_bos","moneyline":-108,"updated_ms":12}`,
-  `GET /v1/prediction?market=chiefs_sb\n\n// Response\n{"market":"Chiefs win Super Bowl","yes":0.674,"no":0.326,"source":"polymarket","updated_ms":120}`,
+  `GET /v1/arbitrage?sport=nba
+
+// Response
+{
+  "meta": { "arbs_returned": 3, "live_arbs": 1, "pregame_arbs": 2, "generated_at": "2026-03-09T19:45:32Z", "latency_ms": 28, "stale_warning": false },
+  "arbs": [
+    {
+      "arb_id": "arb_nba_lal_bos_ml_dk_fd_20260309_194532",
+      "arb_type": "two_way",
+      "game": { "game_id": "nba_lal_bos_20260309", "sport": "nba", "home_team": "Boston Celtics", "away_team": "Los Angeles Lakers", "start_time": "2026-03-09T23:30:00Z", "status": "pregame" },
+      "market": { "type": "moneyline", "description": "Celtics/Lakers Moneyline" },
+      "legs": [
+        { "leg_num": 1, "book": "draftkings", "side": "home", "price": 112, "stake_pct": 47.2, "stake_on_100": 47.20, "payout_on_100": 100.08, "age_seconds": 4 },
+        { "leg_num": 2, "book": "fanduel", "side": "away", "price": -105, "stake_pct": 52.8, "stake_on_100": 52.80, "payout_on_100": 100.44, "age_seconds": 4 }
+      ],
+      "profit": { "profit_pct": 2.14, "profit_on_100": 2.14, "total_payout_on_100": 102.14 },
+      "timing": { "discovered_at": "2026-03-09T19:45:28Z", "age_seconds": 4, "estimated_life_sec": 90, "urgency": "high" },
+      "alerts": []
+    }
+  ]
+}`,
+  `GET /v1/ev/nba?market_types=moneyline,spread&min_ev=1.0
+
+// Response
+{
+  "meta": { "sport": "nba", "sharp_ref": "pinnacle", "min_ev_filter": 1.0, "opps_returned": 5, "generated_at": "2026-03-09T19:45:00Z", "latency_ms": 52 },
+  "opportunities": [
+    {
+      "opp_id": "ev_nba_lal_bos_ml_home_dk_20260309",
+      "game": { "game_id": "nba_lal_bos_20260309", "home_team": "Boston Celtics", "away_team": "Los Angeles Lakers", "start_time": "2026-03-09T23:30:00Z", "status": "pregame", "sport": "nba" },
+      "market": { "type": "moneyline", "side": "home", "line": null, "description": "Celtics ML" },
+      "target_book": { "book": "draftkings", "price": 105, "implied_prob": 0.4878 },
+      "sharp_reference": { "book": "pinnacle", "price": -108, "no_vig_prob": 0.5194, "hold_pct": 2.4 },
+      "ev": { "ev_pct": 4.7, "ev_per_100": 4.70, "kelly_fraction": 0.047, "half_kelly": 0.024, "clv_expected": "positive" },
+      "line_context": { "open_price_target_book": 102, "current_move": -3, "direction": "unfavorable", "minutes_at_current": 8, "sharp_action_on_side": true },
+      "quality_score": 78,
+      "alerts": [],
+      "discovered_at": "2026-03-09T19:42:00Z",
+      "expires_approx": "2026-03-09T19:55:00Z"
+    }
+  ]
+}`,
+  `GET /v1/odds/nba?markets=moneyline,spread,total&books=all
+
+// Response — 84ms
+{
+  "meta": { "sport": "nba", "status_filter": "all", "games_returned": 8, "books_tracked": 12, "generated_at": "2026-03-09T19:45:00Z", "latency_ms": 84, "next_page": null },
+  "games": [
+    {
+      "game_id": "nba_lal_bos_20260309_1930",
+      "sport": "nba",
+      "league": "NBA",
+      "status": "live",
+      "start_time": "2026-03-09T23:30:00Z",
+      "home_team": { "id": "nba_bos", "name": "Boston Celtics", "abbreviation": "BOS", "score": 102 },
+      "away_team": { "id": "nba_lal", "name": "Los Angeles Lakers", "abbreviation": "LAL", "score": 98 },
+      "markets": {
+        "moneyline": {
+          "home": { "books": { "draftkings": { "price": -108, "implied_prob": 0.5194, "open": -102, "updated_at": "2026-03-09T19:44:55Z" }, "pinnacle": { "price": -106, "implied_prob": 0.5146, "open": -104, "updated_at": "2026-03-09T19:44:58Z" } }, "best_price": -106, "best_book": "pinnacle", "no_vig_prob": 0.5146, "ev_vs_best": 0.48, "consensus_price": -107 },
+          "away": { "books": { "draftkings": { "price": 105 }, "pinnacle": { "price": 103 } }, "best_price": 105, "best_book": "draftkings", "no_vig_prob": 0.4854, "ev_vs_best": -0.32 }
+        },
+        "spread": { "home": { "best_line": -3.5, "best_price": -108, "best_book": "pinnacle", "line_move": -0.5 }, "away": { "best_line": 3.5, "best_price": -110, "best_book": "fanduel" } },
+        "total": { "over": { "best_line": 224.5, "best_price": -110, "best_book": "draftkings" }, "under": { "best_line": 224.5, "best_price": -110 }, "line_move": 1.5 }
+      },
+      "market_signals": { "sharp_action_detected": true, "reverse_line_movement": false, "line_frozen": false, "public_bet_pct_home": 0.62, "sharp_side": "home" },
+      "last_updated": "2026-03-09T19:44:58Z",
+      "last_updated_ms": 1710027898000
+    }
+  ]
+}`,
+  `GET /v1/props/nba?player_id=lebron&prop_type=points
+
+// Response
+{
+  "meta": { "sport": "nba", "games_covered": 1, "players_covered": 1, "props_returned": 3, "generated_at": "2026-03-09T19:45:00Z", "latency_ms": 67 },
+  "props": [
+    {
+      "prop_id": "prop_nba_lebron_points_20260309",
+      "player": { "player_id": "nba_lebron", "name": "LeBron James", "position": "SF", "team": "Los Angeles Lakers", "team_abbr": "LAL", "injury_status": "active", "injury_detail": null },
+      "game": { "game_id": "nba_lal_bos_20260309", "opponent": "Boston Celtics", "opp_abbr": "BOS", "home_away": "away", "start_time": "2026-03-09T23:30:00Z", "status": "pregame" },
+      "prop": { "type": "points", "label": "Points", "stat_group": "scoring" },
+      "books": { "draftkings": { "over": { "line": 24.5, "price": -115, "updated_at": "2026-03-09T19:44:00Z" }, "under": { "line": 24.5, "price": -105, "updated_at": "2026-03-09T19:44:00Z" } }, "fanduel": { "over": { "line": 24.5, "price": -112 }, "under": { "line": 24.5, "price": -108 } } },
+      "best": { "over": { "line": 24.5, "price": -112, "book": "fanduel" }, "under": { "line": 24.5, "price": -105, "book": "draftkings" } },
+      "sharp_ref": { "book": "pinnacle", "no_vig_over": 0.518, "no_vig_under": 0.482, "hold_pct": 2.2 },
+      "ev": { "over": { "ev_pct": 2.1, "best_book": "fanduel" }, "under": { "ev_pct": null, "best_book": null } },
+      "historical": { "sample_size": 45, "sample_period": "last_20_games", "avg_result": 25.2, "over_hit_rate": 0.62, "line_vs_avg": -0.7, "trend": "up", "vs_opponent_avg": 26.1, "vs_opponent_games": 12 },
+      "context": { "game_total": 224.5, "game_total_direction": "high", "team_pace_rank": 8, "opp_rank_vs_position": 14, "projected_minutes": 34.0 },
+      "alerts": []
+    }
+  ]
+}`,
+  `GET /v1/scores/nba?status=live,final&include_odds=true
+
+// Response
+{
+  "meta": { "sport": "nba", "date": "2026-03-09", "games_returned": 4, "live_games": 2, "final_games": 1, "generated_at": "2026-03-09T19:45:00Z", "latency_ms": 31 },
+  "games": [
+    {
+      "game_id": "nba_lal_bos_20260309",
+      "sport": "nba",
+      "league": "NBA",
+      "status": "live",
+      "start_time": "2026-03-09T23:30:00Z",
+      "venue": "TD Garden, Boston, MA",
+      "home_team": { "id": "nba_bos", "name": "Boston Celtics", "abbreviation": "BOS", "score": 102, "q1": 28, "q2": 24, "q3": 26, "q4": 24, "ot": null, "record": "42-18" },
+      "away_team": { "id": "nba_lal", "name": "Los Angeles Lakers", "abbreviation": "LAL", "score": 98, "q1": 24, "q2": 26, "q3": 22, "q4": 26, "ot": null, "record": "38-22" },
+      "game_state": { "period": "Q4", "period_number": 4, "clock": "2:34", "clock_running": true, "is_overtime": false, "possession": "LAL", "down_and_distance": null, "field_position": null, "inning": null, "inning_half": null, "outs": null, "runners_on": null },
+      "scoring_events": [
+        { "event_id": "evt_1", "time": "8:42 Q3", "event_type": "basket", "team": "LAL", "player": "LeBron James", "description": "LeBron James 3-pointer", "score_after": "LAL 78, BOS 74", "timestamp": "2026-03-09T19:42:00Z" }
+      ],
+      "live_odds": { "moneyline": { "home_price": -108, "away_price": 105, "best_book": "pinnacle", "updated_ms": 1710027898000 }, "spread": { "home_line": -3.5, "home_price": -110, "best_book": "draftkings" }, "total": { "line": 224.5, "over_price": -110, "best_book": "draftkings" } },
+      "result": null
+    }
+  ]
+}`,
+  `WSS /v1/stream
+
+// Message (line_move event)
+{
+  "type": "line_move",
+  "seq": 18472,
+  "timestamp": "2026-03-09T19:45:00.123Z",
+  "ts_ms": 1710027900123,
+  "game_id": "nba_lal_bos_20260309",
+  "sport": "nba",
+  "teams": "LAL @ BOS",
+  "status": "live",
+  "book": "draftkings",
+  "market": "moneyline",
+  "side": "home",
+  "player": null,
+  "prev_price": -108,
+  "new_price": -113,
+  "move_size": 5,
+  "direction": "home_favored",
+  "prev_line": null,
+  "new_line": null,
+  "market_context": { "sharp_consensus": -106, "market_avg": -109, "ev_impact": -0.8 }
+}`,
+  `GET /v1/prediction?category=sports&linked_game_id=nba_lal_bos_20260309
+
+// Response
+{
+  "meta": { "sources": ["polymarket", "kalshi"], "markets_returned": 4, "sports_markets": 3, "linked_to_sb": 2, "generated_at": "2026-03-09T19:45:00Z", "latency_ms": 120 },
+  "markets": [
+    {
+      "market_id": "pred_poly_nba_lal_bos_winner_20260309",
+      "source": "polymarket",
+      "source_market_id": "0xabc123",
+      "source_url": "https://polymarket.com/event/lakers-celtics-march-9",
+      "category": "sports",
+      "sport": "nba",
+      "linked_game_id": "nba_lal_bos_20260309",
+      "title": "Will the LA Lakers win vs. Boston Celtics on March 9?",
+      "description": "Resolves YES if Lakers win.",
+      "resolution_date": "2026-03-10",
+      "resolution_rule": "Resolves YES if Lakers final score > Celtics.",
+      "status": "open",
+      "resolved_value": null,
+      "outcomes": { "yes": { "price": 0.452, "prob": 0.452, "bid": 0.448, "ask": 0.456, "spread": 0.008, "price_24h_ago": 0.438, "price_change_24h": 1.4 }, "no": { "price": 0.548, "prob": 0.548, "bid": 0.544, "ask": 0.552, "spread": 0.008 } },
+      "volume": { "volume_24h": 12500, "volume_total": 89000, "open_interest": 42000, "num_traders": 340 },
+      "sportsbook_comparison": { "linked_game_id": "nba_lal_bos_20260309", "sb_side": "away", "sb_no_vig_prob": 0.4854, "sb_consensus_prob": 0.482, "prob_delta": -0.0334, "delta_direction": "sb_higher", "cross_market_ev": 7.4, "interpretation": "Prediction market pricing Lakers cheaper than sportsbooks — potential buy signal on YES." },
+      "trend": { "direction_7d": "up", "high_7d": 0.47, "low_7d": 0.41, "volatility_7d": 0.02, "momentum": "stable" },
+      "alerts": ["large_prob_delta_vs_sb"]
+    }
+  ]
+}`,
 ];
 
 const LIVE_SAMPLE_RAW = `{
-  "game_id":    "nba_lal_bos_20260309",
-  "sport":      "nba",
-  "status":     "live",
-  "quarter":    3,
-  "time":       "8:42",
-  "moneyline": {
-    "draftkings": -108,
-    "fanduel":    -112,
-    "betmgm":     -110,
-    "pinnacle":   -106
+  "meta": {
+    "sport": "nba",
+    "status_filter": "live",
+    "games_returned": 1,
+    "books_tracked": 12,
+    "generated_at": "2026-03-09T19:45:00Z",
+    "latency_ms": 84,
+    "next_page": null
   },
-  "best_line":  "pinnacle",
-  "ev":         +4.7,
-  "arbitrage":  false,
-  "updated_ms": 84
+  "games": [
+    {
+      "game_id": "nba_lal_bos_20260309_1930",
+      "sport": "nba",
+      "league": "NBA",
+      "status": "live",
+      "start_time": "2026-03-09T23:30:00Z",
+      "home_team": { "id": "nba_bos", "name": "Boston Celtics", "abbreviation": "BOS", "score": 102 },
+      "away_team": { "id": "nba_lal", "name": "Los Angeles Lakers", "abbreviation": "LAL", "score": 98 },
+      "markets": {
+        "moneyline": {
+          "home": {
+            "books": {
+              "draftkings": { "price": -108, "implied_prob": 0.5194, "open": -102, "updated_at": "2026-03-09T19:44:55Z" },
+              "pinnacle": { "price": -106, "implied_prob": 0.5146, "open": -104, "updated_at": "2026-03-09T19:44:58Z" }
+            },
+            "best_price": -106,
+            "best_book": "pinnacle",
+            "no_vig_prob": 0.5146,
+            "ev_vs_best": 0.48,
+            "consensus_price": -107
+          },
+          "away": {
+            "books": { "draftkings": { "price": 105 }, "pinnacle": { "price": 103 } },
+            "best_price": 105,
+            "best_book": "draftkings",
+            "no_vig_prob": 0.4854,
+            "ev_vs_best": -0.32
+          }
+        },
+        "spread": {
+          "home": { "best_line": -3.5, "best_price": -108, "best_book": "pinnacle", "line_move": -0.5 },
+          "away": { "best_line": 3.5, "best_price": -110, "best_book": "fanduel" }
+        },
+        "total": {
+          "over": { "best_line": 224.5, "best_price": -110, "best_book": "draftkings" },
+          "under": { "best_line": 224.5, "best_price": -110 },
+          "line_move": 1.5
+        }
+      },
+      "market_signals": {
+        "sharp_action_detected": true,
+        "reverse_line_movement": false,
+        "line_frozen": false,
+        "public_bet_pct_home": 0.62,
+        "public_money_pct_home": 0.58,
+        "sharp_side": "home"
+      },
+      "last_updated": "2026-03-09T19:44:58Z",
+      "last_updated_ms": 1710027898000
+    }
+  ]
 }`;
 
 const INTEGRATION_SNIPPETS = {
@@ -214,7 +420,7 @@ function HomePage() {
         <section className="max-w-6xl mx-auto px-6 pt-4 pb-12 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div>
-              <h1 className="mt-0 pt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] -mt-0.5">
+              <h1 className="mt-0 pt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] -mt-2">
                 Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
               </h1>
               <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -270,58 +476,27 @@ function HomePage() {
                     </svg>
                   )}
                 </button>
-                <pre className="p-4 pr-12 pt-10 text-[13px] leading-relaxed font-mono overflow-x-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
-                  <code>
-                    {heroEndpointIndex === 0 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/arbitrage</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;pairs&quot;</span><span className="text-[#888]">: [</span>{"{"}<span className="text-[#7dd3fc]">&quot;book_a&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;DK&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;book_b&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;FD&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;edge&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">2.1</span><span className="text-[#888]">{"}]}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 1 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/ev/nba?market=moneyline</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;market&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;moneyline&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;books&quot;</span><span className="text-[#888]">: [</span><span className="text-[#86efac]">&quot;pinnacle&quot;</span><span className="text-[#888]">, </span><span className="text-[#86efac]">&quot;draftkings&quot;</span><span className="text-[#888]">]{"}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 2 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/odds/nba?markets=moneyline,ev&amp;books=all</span>{"\n\n"}
-                        <span className="text-[#555]">// Response — 84ms</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Lakers vs. Celtics&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;pinnacle&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-106</span><span className="text-[#888]">{"}"}</span>, <span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">{"}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 3 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/props/nba?player=lebron&amp;prop=points</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;player&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;LeBron James&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;prop&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;points&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;lines&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;over&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">24.5</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;under&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">24.5</span><span className="text-[#888]">{"}}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 4 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/scores/nba</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game_id&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;nba_lal_bos_20260309&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;home_score&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">98</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;away_score&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">102</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;quarter&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;status&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;live&quot;</span><span className="text-[#888]">{"}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 5 && (
-                      <>
-                        <span className="text-[#93c5fd]">WSS</span> <span className="text-[#86efac]">/v1/stream</span>{"\n\n"}
-                        <span className="text-[#555]">// Response (stream)</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;type&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;line_update&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;game_id&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;nba_lal_bos&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">{"}"}</span>
-                      </>
-                    )}
-                    {heroEndpointIndex === 6 && (
-                      <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/prediction?market=chiefs_sb</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;market&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Chiefs win Super Bowl&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;yes&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">0.674</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;no&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">0.326</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;source&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;polymarket&quot;</span><span className="text-[#888]">{"}"}</span>
-                      </>
-                    )}
-                    <span className={`inline-block w-2 align-bottom ${cursorVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-100`} style={{ color: "#86efac" }}>|</span>
+                <pre className="p-4 pr-12 pt-10 text-[12px] leading-relaxed font-mono overflow-x-auto max-h-[320px] overflow-y-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
+                  <code className="text-[#bbb] whitespace-pre-wrap break-words block">
+                    {(() => {
+                      const raw = HERO_SNIPPETS_BY_ENDPOINT[heroEndpointIndex];
+                      const firstLineEnd = raw.indexOf("\n");
+                      const firstLine = firstLineEnd >= 0 ? raw.slice(0, firstLineEnd) : raw;
+                      const rest = firstLineEnd >= 0 ? raw.slice(firstLineEnd + 1) : "";
+                      const isWss = firstLine.startsWith("WSS ");
+                      const method = isWss ? "WSS" : firstLine.split(" ")[0] ?? "GET";
+                      const path = firstLine.slice(method.length).trim();
+                      return (
+                        <>
+                          {isWss ? <span className="text-[#93c5fd]">WSS</span> : <span className="text-[#7dd3fc]">GET</span>}
+                          {" "}
+                          <span className="text-[#86efac]">{path}</span>
+                          {"\n"}
+                          <span className="text-[#888]">{rest}</span>
+                          <span className={`inline-block w-2 align-bottom ${cursorVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-100`} style={{ color: "#86efac" }}>|</span>
+                        </>
+                      );
+                    })()}
                   </code>
                 </pre>
               </div>
@@ -502,120 +677,130 @@ function HomePage() {
                     {glanceEndpointIndex === 0 && (
                       <div className="space-y-3">
                         <div className="font-semibold text-[#1a1a1a]">Live arb opportunities</div>
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse text-[11px]">
                           <thead>
                             <tr className="border-b border-[#e0e0e0]">
-                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Books</th>
-                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Sport</th>
-                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Edge %</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Game</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Legs</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Profit %</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">$100</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Urgency</th>
                             </tr>
                           </thead>
-                          <tbody className="text-[12px]">
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">DK / FD</td><td>NBA</td><td className="text-right text-[#0d9488] font-medium">2.1%</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">Pinnacle / BetMGM</td><td>NFL</td><td className="text-right text-[#0d9488] font-medium">1.8%</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">FD / Caesars</td><td>MLB</td><td className="text-right text-[#0d9488] font-medium">1.4%</td></tr>
+                          <tbody className="text-[#333]">
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">LAL @ BOS ML</td><td>DK home / FD away</td><td className="text-right text-[#0d9488] font-medium">2.14%</td><td className="text-right">$2.14</td><td><span className="text-[#ea580c]">high</span></td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">KC @ BUF ML</td><td>Pinnacle / BetMGM</td><td className="text-right text-[#0d9488] font-medium">1.82%</td><td className="text-right">$1.82</td><td><span className="text-[#ca8a04]">moderate</span></td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">NYY @ BOS total</td><td>FD over / Caesars under</td><td className="text-right text-[#0d9488] font-medium">1.41%</td><td className="text-right">$1.41</td><td><span className="text-[#16a34a]">stable</span></td></tr>
                           </tbody>
                         </table>
                       </div>
                     )}
                     {glanceEndpointIndex === 1 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">EV by game (moneyline)</div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
-                            <span>Lakers vs. Celtics</span>
-                            <span className="text-[#0d9488] font-medium">+4.7% EV</span>
+                        <div className="font-semibold text-[#1a1a1a]">+EV opportunities (sharp_ref: Pinnacle)</div>
+                        <div className="space-y-2 text-[11px]">
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
+                            <span className="min-w-0">Celtics ML · DK +105</span>
+                            <span className="text-[#0d9488] font-medium shrink-0">+4.7%</span>
+                            <span className="text-[#666] shrink-0">½ Kelly 2.4% · Q78</span>
                           </div>
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
-                            <span>Chiefs vs. Bills</span>
-                            <span className="text-[#0d9488] font-medium">+2.2% EV</span>
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
+                            <span className="min-w-0">Chiefs -3.5 · FD -108</span>
+                            <span className="text-[#0d9488] font-medium shrink-0">+2.2%</span>
+                            <span className="text-[#666] shrink-0">½ Kelly 1.1% · Q62</span>
                           </div>
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
-                            <span>Yankees vs. Red Sox</span>
-                            <span className="text-[#b91c1c] font-medium">−0.8% EV</span>
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
+                            <span className="min-w-0">Yankees ML · BetMGM +100</span>
+                            <span className="text-[#b91c1c] font-medium shrink-0">−0.8%</span>
+                            <span className="text-[#666] shrink-0">CLV neg · Q38</span>
                           </div>
                         </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 2 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Odds comparison — Lakers vs. Celtics</div>
-                        <table className="w-full text-left border-collapse text-[12px]">
+                        <div className="font-semibold text-[#1a1a1a]">LAL @ BOS — moneyline · spread · total</div>
+                        <table className="w-full text-left border-collapse text-[11px]">
                           <thead>
                             <tr className="border-b border-[#e0e0e0]">
-                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Book</th>
-                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Moneyline</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Book</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">ML</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">ev_vs_best</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Pinnacle</td><td className="text-right">−106</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">DraftKings</td><td className="text-right">−108</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">FanDuel</td><td className="text-right">−112</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Pinnacle (sharp)</td><td className="text-right">−106</td><td className="text-right text-[#0d9488]">+0.48%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">DraftKings</td><td className="text-right">−108</td><td className="text-right text-[#0d9488]">+0.48%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">FanDuel</td><td className="text-right">−112</td><td className="text-right text-[#b91c1c]">−0.32%</td></tr>
                           </tbody>
                         </table>
+                        <p className="text-[10px] text-[#666]">market_signals: sharp_action_detected ✓ · sharp_side: home · public_bet_pct_home 62%</p>
                       </div>
                     )}
                     {glanceEndpointIndex === 3 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Player props — LeBron James</div>
-                        <table className="w-full text-left border-collapse text-[12px]">
+                        <div className="font-semibold text-[#1a1a1a]">LeBron James · vs BOS · injury: active</div>
+                        <table className="w-full text-left border-collapse text-[11px]">
                           <thead>
                             <tr className="border-b border-[#e0e0e0]">
-                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Prop</th>
-                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Line</th>
-                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Best book</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Prop</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Line</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Over EV</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Hit rate</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Points</td><td>24.5</td><td className="text-right">DraftKings</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Rebounds</td><td>7.5</td><td className="text-right">FanDuel</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Assists</td><td>6.5</td><td className="text-right">BetMGM</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Points</td><td>24.5</td><td className="text-right text-[#0d9488]">+2.1%</td><td>62% (20g)</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Rebounds</td><td>7.5</td><td className="text-right text-[#666]">—</td><td>58%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Assists</td><td>6.5</td><td className="text-right text-[#0d9488]">+1.2%</td><td>64%</td></tr>
                           </tbody>
                         </table>
+                        <p className="text-[10px] text-[#666]">historical: avg 25.2 · line_vs_avg −0.7 · trend up · sharp_ref Pinnacle</p>
                       </div>
                     )}
                     {glanceEndpointIndex === 4 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Live scores</div>
-                        <div className="rounded-lg bg-[#f5f5f5] p-4">
+                        <div className="font-semibold text-[#1a1a1a]">Live scores · game_state · scoring_events</div>
+                        <div className="rounded-lg bg-[#f5f5f5] p-3">
                           <div className="flex justify-between items-center">
                             <span className="font-medium">LAL</span>
-                            <span className="text-2xl font-bold tabular-nums">98</span>
-                            <span className="text-[#777] text-[12px]">Q4 2:34</span>
-                            <span className="text-2xl font-bold tabular-nums">102</span>
+                            <span className="text-xl font-bold tabular-nums">98</span>
+                            <span className="text-[#777] text-[11px]">Q4 2:34 · possession LAL</span>
+                            <span className="text-xl font-bold tabular-nums">102</span>
                             <span className="font-medium">BOS</span>
                           </div>
-                          <p className="text-[11px] text-[#888] mt-2 text-center">Lakers vs. Celtics · Live</p>
+                          <p className="text-[10px] text-[#888] mt-1.5">LAL 24-26-22-26 · BOS 28-24-26-24 · TD Garden</p>
+                          <p className="text-[10px] text-[#666] mt-1">Last event: LeBron James 3-pointer → LAL 78, BOS 74 · live_odds attached</p>
                         </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 5 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Real-time line movement</div>
-                        <div className="rounded-lg bg-[#f5f5f5] p-3 font-mono text-[11px] space-y-1.5">
-                          <div className="flex justify-between"><span>nba_lal_bos</span><span className="text-[#0d9488]">moneyline −108 → −106</span></div>
-                          <div className="flex justify-between"><span>nfl_kc_buf</span><span className="text-[#b91c1c]">spread −3 → −3.5</span></div>
-                          <div className="flex justify-between"><span>nba_den_phx</span><span className="text-[#0d9488]">total 218.5 → 219</span></div>
+                        <div className="font-semibold text-[#1a1a1a]">Stream: line_move · steam_move · arb_alert</div>
+                        <div className="rounded-lg bg-[#f5f5f5] p-3 font-mono text-[10px] space-y-2">
+                          <div><span className="text-[#666]">line_move</span> LAL @ BOS · draftkings · moneyline home −108→−113 · ev_impact −0.8</div>
+                          <div><span className="text-[#666]">steam_move</span> nfl_kc_buf · spread · books_moved 4 · leading_book pinnacle · confidence high</div>
+                          <div><span className="text-[#666]">arb_alert</span> nba_den_phx ML · profit_pct 1.9 · urgency high · legs DK/FD</div>
                         </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 6 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Prediction markets</div>
-                        <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Prediction markets · sportsbook_comparison</div>
+                        <div className="space-y-2 text-[11px]">
                           <div>
-                            <p className="text-[12px] text-[#666] mb-1">Chiefs win Super Bowl</p>
-                            <div className="h-2 bg-[#e5e5e5] rounded-full overflow-hidden flex">
-                              <div className="h-full w-[67%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                            <p className="text-[#333] font-medium">Lakers win vs Celtics · Polymarket</p>
+                            <div className="h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden flex mt-0.5">
+                              <div className="h-full w-[45%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
                             </div>
-                            <p className="text-[11px] text-[#888] mt-0.5">67% yes · Polymarket</p>
+                            <p className="text-[10px] text-[#666] mt-0.5">YES 45.2% · sb_no_vig 48.5% · prob_delta −3.3 · cross_market_ev +7.4%</p>
                           </div>
                           <div>
-                            <p className="text-[12px] text-[#666] mb-1">Fed rate cut by June</p>
-                            <div className="h-2 bg-[#e5e5e5] rounded-full overflow-hidden flex">
-                              <div className="h-full w-[42%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                            <p className="text-[#333] font-medium">Chiefs win Super Bowl · Kalshi</p>
+                            <div className="h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden flex mt-0.5">
+                              <div className="h-full w-[67%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
                             </div>
-                            <p className="text-[11px] text-[#888] mt-0.5">42% yes · Kalshi</p>
+                            <p className="text-[10px] text-[#666] mt-0.5">volume_24h $12.5k · open_interest $42k</p>
                           </div>
                         </div>
                       </div>
@@ -749,25 +934,9 @@ function HomePage() {
                 </span>
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400">LIVE</span>
               </div>
-              <pre className="p-4 pt-10 pr-24 pb-4 text-[13px] leading-relaxed font-mono overflow-x-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
-                <code>
-                  <span className="text-[#888]">{"{"}</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;game_id&quot;</span><span className="text-[#888]">:    </span><span className="text-[#86efac]">&quot;nba_lal_bos_20260309&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;sport&quot;</span><span className="text-[#888]">:      </span><span className="text-[#86efac]">&quot;nba&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;status&quot;</span><span className="text-[#888]">:     </span><span className="text-[#86efac]">&quot;live&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;quarter&quot;</span><span className="text-[#888]">:    </span><span className="text-[#fbbf24]">3</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;time&quot;</span><span className="text-[#888]">:       </span><span className="text-[#86efac]">&quot;8:42&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;moneyline&quot;</span><span className="text-[#888]">: </span><span className="text-[#888]">{"{"}</span>{"\n"}
-                  <span className="text-[#7dd3fc]">    &quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">    &quot;fanduel&quot;</span><span className="text-[#888]">:    </span><span className="text-[#fbbf24]">-112</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">    &quot;betmgm&quot;</span><span className="text-[#888]">:     </span><span className="text-[#fbbf24]">-110</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">    &quot;pinnacle&quot;</span><span className="text-[#888]">:   </span><span className="text-[#fbbf24]">-106</span>{"\n"}
-                  <span className="text-[#888]">  {"}"}</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;best_line&quot;</span><span className="text-[#888]">:  </span><span className="text-[#86efac]">&quot;pinnacle&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;ev&quot;</span><span className="text-[#888]">:         </span><span className="text-[#fbbf24]">+4.7</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;arbitrage&quot;</span><span className="text-[#888]">:  </span><span className="text-[#fbbf24]">false</span><span className="text-[#888]">,</span>{"\n"}
-                  <span className="text-[#7dd3fc]">  &quot;updated_ms&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">84</span>{"\n"}
-                  <span className="text-[#888]">{"}"}</span>
+              <pre className="p-4 pt-10 pr-24 pb-4 text-[11px] leading-relaxed font-mono overflow-x-auto max-h-[280px] overflow-y-auto whitespace-pre-wrap break-words" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
+                <code className="text-[#bbb]">
+                  {LIVE_SAMPLE_RAW}
                   <span className={`inline-block w-2 align-bottom ${cursorVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-100`} style={{ color: "#86efac" }}>|</span>
                 </code>
               </pre>
@@ -857,16 +1026,26 @@ function HomePage() {
                 <span>{responseExpanded ? "▼" : "→"} Response</span>
               </button>
               {responseExpanded && (
-                <div className="mt-2 rounded-xl border border-[#222] bg-[#0f0f0f] p-4 overflow-x-auto">
-                  <pre className="font-mono text-[12px] leading-relaxed text-[#ccc]" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
-                    <code>
-                      <span className="text-[#888]">{"{"}</span>{"\n"}
-                      <span className="text-[#7dd3fc]">  &quot;game_id&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;nba_lal_bos_20260309&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                      <span className="text-[#7dd3fc]">  &quot;moneyline&quot;</span><span className="text-[#888]">: </span><span className="text-[#888]">{"{"}</span> <span className="text-[#7dd3fc]">&quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;fanduel&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-112</span> <span className="text-[#888]">{"}"}</span><span className="text-[#888]">,</span>{"\n"}
-                      <span className="text-[#7dd3fc]">  &quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">,</span>{"\n"}
-                      <span className="text-[#7dd3fc]">  &quot;updated_ms&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">84</span>{"\n"}
-                      <span className="text-[#888]">{"}"}</span>
-                    </code>
+                <div className="mt-2 rounded-xl border border-[#222] bg-[#0f0f0f] p-4 overflow-x-auto max-h-[280px] overflow-y-auto">
+                  <pre className="font-mono text-[11px] leading-relaxed text-[#ccc] whitespace-pre-wrap break-words" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
+                    <code>{`{
+  "meta": { "sport": "nba", "games_returned": 1, "books_tracked": 12, "latency_ms": 84 },
+  "games": [{
+    "game_id": "nba_lal_bos_20260309_1930",
+    "status": "live",
+    "home_team": { "name": "Boston Celtics", "abbreviation": "BOS", "score": 102 },
+    "away_team": { "name": "Los Angeles Lakers", "abbreviation": "LAL", "score": 98 },
+    "markets": {
+      "moneyline": {
+        "home": { "best_price": -106, "best_book": "pinnacle", "no_vig_prob": 0.5146, "ev_vs_best": 0.48, "books": { "draftkings": { "price": -108, "implied_prob": 0.5194 }, "pinnacle": { "price": -106 } } },
+        "away": { "best_price": 105, "best_book": "draftkings", "no_vig_prob": 0.4854 }
+      },
+      "spread": { "home": { "best_line": -3.5, "best_price": -108 }, "away": { "best_line": 3.5 } },
+      "total": { "over": { "best_line": 224.5 }, "under": { "best_line": 224.5 }, "line_move": 1.5 }
+    },
+    "market_signals": { "sharp_action_detected": true, "reverse_line_movement": false, "sharp_side": "home", "public_bet_pct_home": 0.62 }
+  }]
+}`}</code>
                   </pre>
                 </div>
               )}
