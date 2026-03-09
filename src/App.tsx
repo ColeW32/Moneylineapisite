@@ -205,7 +205,7 @@ function HomePage() {
           <a href="#" className="hover:opacity-70 transition-opacity">
             Docs
           </a>
-          <a href="#" className="hover:opacity-70 transition-opacity">
+          <a href="/pricing" className="hover:opacity-70 transition-opacity">
             Pricing
           </a>
           <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
@@ -219,12 +219,22 @@ function HomePage() {
         {/* Hero: big text on off-white */}
         <section className="max-w-6xl mx-auto px-6 pt-16 pb-12 lg:pt-20 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <h1 className="mt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1]">
-              Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
-            </h1>
+            <div>
+              <h1 className="mt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1]">
+                Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
+              </h1>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+                <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
+                  Get API Key
+                </a>
+                <a href="/docs" className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline">
+                  Explore Docs
+                </a>
+              </div>
+            </div>
             <div>
               <p className="text-lg text-[#4a4a4a] leading-relaxed lg:pb-1">
-                MoneyLine Sportsdata delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for quants, traders, and product teams.
+                MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for quants, traders, and product teams.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
                 <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
@@ -235,7 +245,7 @@ function HomePage() {
                 </a>
               </div>
               <p className="mt-4 text-xs text-[#4a4a4a]/90">
-                Trusted by quant funds, DFS operators, and trading teams.
+                Trusted by DFS operators, Sportsbooks, Sports data analytics platforms, and Quant funds.
               </p>
               {/* API code snippet */}
               <div className="mt-8 relative rounded-xl bg-[#0f0f0f] border border-[#222] shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
