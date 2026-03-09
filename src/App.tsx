@@ -110,13 +110,6 @@ console.log(odds[0].ev); // → +4.7`,
   --data-urlencode "markets=moneyline,ev"`,
 } as const;
 
-const INTEGRATION_RESPONSE_JSON = `{
-  "game_id": "nba_lal_bos_20260309",
-  "moneyline": { "draftkings": -108, "fanduel": -112 },
-  "ev": 4.7,
-  "updated_ms": 84
-}`;
-
 function HomePage() {
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
