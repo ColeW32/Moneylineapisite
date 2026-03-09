@@ -1,23 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-const HERO_SNIPPET_RAW = `// One request. Real-time edge data.
-GET /v1/odds?sport=nba&markets=moneyline,ev&books=all
-
-// Response — 84ms
-{
-  "game": "Lakers vs. Celtics",
-  "status": "live",
-  "moneyline": {
-    "draftkings": -108,
-    "fanduel":   -112,
-    "pinnacle":  -106
-  },
-  "ev":         +4.7,
-  "best_line":  "pinnacle",
-  "arbitrage":  true,
-  "updated_ms": 84
-}`;
-
 const TICKER_ITEMS = [
   { label: "LAL/BOS · ML −108", trend: "up", arrow: "↑" },
   { label: "KC/PHI · Spread −3.5", trend: "up", arrow: "↑" },
@@ -72,6 +54,16 @@ const API_ENDPOINTS = [
   { method: "GET", path: "/v1/prediction", desc: "Kalshi + Polymarket feeds" },
 ] as const;
 
+const HERO_SNIPPETS_BY_ENDPOINT = [
+  `GET /v1/odds/nba?markets=moneyline,ev&books=all\n\n// Response — 84ms\n{"game":"Lakers vs. Celtics","status":"live","moneyline":{"draftkings":-108,"fanduel":-112,"pinnacle":-106},"ev":4.7,"best_line":"pinnacle","arbitrage":true,"updated_ms":84}`,
+  `GET /v1/ev/nba?market=moneyline\n\n// Response\n{"market":"moneyline","ev":4.7,"books":["pinnacle","draftkings"],"updated_ms":52}`,
+  `GET /v1/arbitrage\n\n// Response\n{"pairs":[{"book_a":"DK","book_b":"FD","edge":2.1,"sport":"nba"}],"updated_ms":31}`,
+  `GET /v1/props/nba?player=lebron&prop=points\n\n// Response\n{"player":"LeBron James","prop":"points","lines":{"over":24.5,"under":24.5},"books":["draftkings","fanduel"],"updated_ms":67}`,
+  `GET /v1/scores/nba\n\n// Response\n{"game_id":"nba_lal_bos_20260309","home_score":98,"away_score":102,"quarter":4,"clock":"2:34","status":"live"}`,
+  `WSS /v1/stream\n\n// Response (stream)\n{"type":"line_update","game_id":"nba_lal_bos","moneyline":-108,"updated_ms":12}`,
+  `GET /v1/prediction?market=chiefs_sb\n\n// Response\n{"market":"Chiefs win Super Bowl","yes":0.674,"no":0.326,"source":"polymarket","updated_ms":120}`,
+];
+
 const LIVE_SAMPLE_RAW = `{
   "game_id":    "nba_lal_bos_20260309",
   "sport":      "nba",
@@ -114,6 +106,7 @@ function HomePage() {
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [heroEndpointIndex, setHeroEndpointIndex] = useState(0);
   const [copiedLiveSample, setCopiedLiveSample] = useState(false);
   const [integrateTab, setIntegrateTab] = useState<"python" | "javascript" | "curl">("python");
   const [responseExpanded, setResponseExpanded] = useState(false);
@@ -139,7 +132,7 @@ function HomePage() {
   }, []);
 
   const copySnippet = async () => {
-    await navigator.clipboard.writeText(HERO_SNIPPET_RAW);
+    await navigator.clipboard.writeText(HERO_SNIPPETS_BY_ENDPOINT[heroEndpointIndex]);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -187,7 +180,7 @@ function HomePage() {
       {/* Navigation */}
       <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
         <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
-          <span>Money</span>
+          <span>Money </span>
           <span
             className={`inline-block min-w-[0.5em] transition-opacity duration-150 ${
               slashVisible ? "opacity-100" : "opacity-0"
@@ -231,24 +224,37 @@ function HomePage() {
                   Explore Docs
                 </a>
               </div>
+              <p className="mt-4 text-xs text-[#4a4a4a]/90">
+                Trusted by DFS operators, Sportsbooks, Sports data analytics platforms, and Quant funds.
+              </p>
             </div>
             <div>
               <p className="text-lg text-[#4a4a4a] leading-relaxed lg:pb-1">
                 MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for quants, traders, and product teams.
               </p>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
-                  Get API Key
-                </a>
-                <a href="/docs" className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline">
-                  Explore Docs
-                </a>
+              {/* Endpoint selector */}
+              <div className="mt-6 overflow-x-auto pb-2 -mx-1 px-1">
+                <div className="flex gap-2 min-w-max">
+                  {API_ENDPOINTS.map((ep, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setHeroEndpointIndex(i)}
+                      className={`flex-shrink-0 rounded-lg border px-3 py-2 text-left transition-colors cursor-pointer ${
+                        heroEndpointIndex === i
+                          ? "border-[#1a1a1a] bg-[#1a1a1a] text-white"
+                          : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
+                      }`}
+                    >
+                      <span className={`block font-mono text-[10px] font-bold uppercase ${heroEndpointIndex === i ? "text-[#86efac]" : "text-[#666]"}`}>{ep.method}</span>
+                      <span className="block font-mono text-[11px] mt-0.5">{ep.path}</span>
+                      <span className="block text-[10px] text-[#888] mt-1 max-w-[140px]">{ep.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p className="mt-4 text-xs text-[#4a4a4a]/90">
-                Trusted by DFS operators, Sportsbooks, Sports data analytics platforms, and Quant funds.
-              </p>
               {/* API code snippet */}
-              <div className="mt-8 relative rounded-xl bg-[#0f0f0f] border border-[#222] shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
+              <div className="mt-3 relative rounded-xl bg-[#0f0f0f] border border-[#222] shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
                 <button
                   type="button"
                   onClick={copySnippet}
@@ -265,22 +271,55 @@ function HomePage() {
                 </button>
                 <pre className="p-4 pr-12 pt-10 text-[13px] leading-relaxed font-mono overflow-x-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
                   <code>
-                    <span className="text-[#555]">// One request. Real-time edge data.</span>{"\n"}
-                    <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/odds?sport=nba&amp;markets=moneyline,ev&amp;books=all</span>{"\n\n"}
-                    <span className="text-[#555]">// Response — 84ms</span>{"\n"}
-                    <span className="text-[#888]">{"{"}</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;game&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Lakers vs. Celtics&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;status&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;live&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;moneyline&quot;</span><span className="text-[#888]">: </span><span className="text-[#888]">{"{"}</span>{"\n"}
-                    <span className="text-[#7dd3fc]">    &quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">    &quot;fanduel&quot;</span><span className="text-[#888]">:   </span><span className="text-[#fbbf24]">-112</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">    &quot;pinnacle&quot;</span><span className="text-[#888]">:  </span><span className="text-[#fbbf24]">-106</span>{"\n"}
-                    <span className="text-[#888]">  {"}"}</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;ev&quot;</span><span className="text-[#888]">:         </span><span className="text-[#fbbf24]">+4.7</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;best_line&quot;</span><span className="text-[#888]">:  </span><span className="text-[#86efac]">&quot;pinnacle&quot;</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;arbitrage&quot;</span><span className="text-[#888]">:  </span><span className="text-[#fbbf24]">true</span><span className="text-[#888]">,</span>{"\n"}
-                    <span className="text-[#7dd3fc]">  &quot;updated_ms&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">84</span>{"\n"}
-                    <span className="text-[#888]">{"}"}</span>
+                    {heroEndpointIndex === 0 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/odds/nba?markets=moneyline,ev&amp;books=all</span>{"\n\n"}
+                        <span className="text-[#555]">// Response — 84ms</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Lakers vs. Celtics&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;pinnacle&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-106</span><span className="text-[#888]">{"}"}</span>, <span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">{"}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 1 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/ev/nba?market=moneyline</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;market&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;moneyline&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;books&quot;</span><span className="text-[#888]">: [</span><span className="text-[#86efac]">&quot;pinnacle&quot;</span><span className="text-[#888]">, </span><span className="text-[#86efac]">&quot;draftkings&quot;</span><span className="text-[#888]">]{"}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 2 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/arbitrage</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;pairs&quot;</span><span className="text-[#888]">: [</span>{"{"}<span className="text-[#7dd3fc]">&quot;book_a&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;DK&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;book_b&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;FD&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;edge&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">2.1</span><span className="text-[#888]">{"}]}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 3 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/props/nba?player=lebron&amp;prop=points</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;player&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;LeBron James&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;prop&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;points&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;lines&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;over&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">24.5</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;under&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">24.5</span><span className="text-[#888]">{"}}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 4 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/scores/nba</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game_id&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;nba_lal_bos_20260309&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;home_score&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">98</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;away_score&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">102</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;quarter&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;status&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;live&quot;</span><span className="text-[#888]">{"}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 5 && (
+                      <>
+                        <span className="text-[#93c5fd]">WSS</span> <span className="text-[#86efac]">/v1/stream</span>{"\n\n"}
+                        <span className="text-[#555]">// Response (stream)</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;type&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;line_update&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;game_id&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;nba_lal_bos&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">{"}"}</span>
+                      </>
+                    )}
+                    {heroEndpointIndex === 6 && (
+                      <>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/prediction?market=chiefs_sb</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;market&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Chiefs win Super Bowl&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;yes&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">0.674</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;no&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">0.326</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;source&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;polymarket&quot;</span><span className="text-[#888]">{"}"}</span>
+                      </>
+                    )}
                     <span className={`inline-block w-2 align-bottom ${cursorVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-100`} style={{ color: "#86efac" }}>|</span>
                   </code>
                 </pre>
