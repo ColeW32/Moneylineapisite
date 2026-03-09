@@ -29,6 +29,20 @@ const TICKER_ITEMS = [
   { label: "KALSHI · Fed Rate Cut 42%", trend: "down", arrow: "↓" },
 ] as const;
 
+const SPORTSBOOK_SOURCES = [
+  "DraftKings",
+  "FanDuel",
+  "BetMGM",
+  "Pinnacle",
+  "Caesars",
+  "PointsBet",
+  "Kalshi",
+  "Polymarket",
+  "WynnBET",
+  "BetRivers",
+  "+90 more",
+] as const;
+
 function App() {
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
@@ -191,6 +205,21 @@ function App() {
               <a href="#" className="rounded-full border border-white/30 text-white px-5 py-2.5 text-sm font-medium hover:bg-white/10 transition-colors inline-block">
                 Explore docs
               </a>
+            </div>
+            <div className="mt-10 pt-6 border-t border-[#1e1e1e]">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#555] text-center mb-3">
+                DATA SOURCED FROM
+              </p>
+              <div className="sportsbook-strip">
+                <div className="sportsbook-track px-6 py-2 text-[13px] text-[#666]">
+                  {[...SPORTSBOOK_SOURCES, ...SPORTSBOOK_SOURCES].map((name, index) => (
+                    <div key={index} className="flex items-center">
+                      <span className="sportsbook-name font-semibold whitespace-nowrap">{name}</span>
+                      <span className="mx-4 text-[#444]">·</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>

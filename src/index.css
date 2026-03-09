@@ -70,3 +70,59 @@ body {
     transform: translateX(-50%);
   }
 }
+
+.sportsbook-strip {
+  position: relative;
+  overflow: hidden;
+}
+
+.sportsbook-strip::before,
+.sportsbook-strip::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.sportsbook-strip::before {
+  left: 0;
+  background: linear-gradient(to right, #1a1a1a, rgba(26, 26, 26, 0));
+}
+
+.sportsbook-strip::after {
+  right: 0;
+  background: linear-gradient(to left, #1a1a1a, rgba(26, 26, 26, 0));
+}
+
+.sportsbook-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.75rem;
+  white-space: nowrap;
+  animation: sportsbook-marquee 35s linear infinite;
+}
+
+.sportsbook-strip:hover .sportsbook-track {
+  animation-play-state: paused;
+}
+
+.sportsbook-name {
+  color: #666666;
+  transition: color 0.2s ease-out;
+}
+
+.sportsbook-name:hover {
+  color: #aaaaaa;
+}
+
+@keyframes sportsbook-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
