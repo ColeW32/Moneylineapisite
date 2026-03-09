@@ -45,9 +45,9 @@ const FEATURE_TILES = [
 ] as const;
 
 const API_ENDPOINTS = [
-  { method: "GET", path: "/v1/odds/{sport}", desc: "Live odds across all books" },
-  { method: "GET", path: "/v1/ev/{sport}", desc: "Pre-computed EV by market" },
   { method: "GET", path: "/v1/arbitrage", desc: "Live arb opportunities" },
+  { method: "GET", path: "/v1/ev/{sport}", desc: "Pre-computed EV by market" },
+  { method: "GET", path: "/v1/odds/{sport}", desc: "Live odds across all books" },
   { method: "GET", path: "/v1/props/{sport}", desc: "Player props across books" },
   { method: "GET", path: "/v1/scores/{sport}", desc: "Live scores and results" },
   { method: "WSS", path: "/v1/stream", desc: "Real-time line movement feed" },
@@ -55,9 +55,9 @@ const API_ENDPOINTS = [
 ] as const;
 
 const HERO_SNIPPETS_BY_ENDPOINT = [
-  `GET /v1/odds/nba?markets=moneyline,ev&books=all\n\n// Response — 84ms\n{"game":"Lakers vs. Celtics","status":"live","moneyline":{"draftkings":-108,"fanduel":-112,"pinnacle":-106},"ev":4.7,"best_line":"pinnacle","arbitrage":true,"updated_ms":84}`,
-  `GET /v1/ev/nba?market=moneyline\n\n// Response\n{"market":"moneyline","ev":4.7,"books":["pinnacle","draftkings"],"updated_ms":52}`,
   `GET /v1/arbitrage\n\n// Response\n{"pairs":[{"book_a":"DK","book_b":"FD","edge":2.1,"sport":"nba"}],"updated_ms":31}`,
+  `GET /v1/ev/nba?market=moneyline\n\n// Response\n{"market":"moneyline","ev":4.7,"books":["pinnacle","draftkings"],"updated_ms":52}`,
+  `GET /v1/odds/nba?markets=moneyline,ev&books=all\n\n// Response — 84ms\n{"game":"Lakers vs. Celtics","status":"live","moneyline":{"draftkings":-108,"fanduel":-112,"pinnacle":-106},"ev":4.7,"best_line":"pinnacle","arbitrage":true,"updated_ms":84}`,
   `GET /v1/props/nba?player=lebron&prop=points\n\n// Response\n{"player":"LeBron James","prop":"points","lines":{"over":24.5,"under":24.5},"books":["draftkings","fanduel"],"updated_ms":67}`,
   `GET /v1/scores/nba\n\n// Response\n{"game_id":"nba_lal_bos_20260309","home_score":98,"away_score":102,"quarter":4,"clock":"2:34","status":"live"}`,
   `WSS /v1/stream\n\n// Response (stream)\n{"type":"line_update","game_id":"nba_lal_bos","moneyline":-108,"updated_ms":12}`,
@@ -114,6 +114,7 @@ function HomePage() {
   const [stat1, setStat1] = useState(0);
   const [stat2, setStat2] = useState(0);
   const [stat3, setStat3] = useState(0);
+  const [glanceEndpointIndex, setGlanceEndpointIndex] = useState(0);
   const statsSectionRef = useRef<HTMLElement>(null);
   const statsAnimatedRef = useRef(false);
 
@@ -177,46 +178,50 @@ function HomePage() {
 
   return (
     <div className="relative min-h-screen bg-[#f5f2eb] text-[#1a1a1a]">
-      {/* Navigation */}
-      <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-        <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
-          <span>Money </span>
-          <span
-            className={`inline-block min-w-[0.5em] transition-opacity duration-150 ${
-              slashVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            \
-          </span>
-          <span>Line</span>
-        </a>
-
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
-          <a href="#" className="hover:opacity-70 transition-opacity">
-            API
-          </a>
-          <a href="#" className="hover:opacity-70 transition-opacity">
-            Docs
-          </a>
-          <a href="/pricing" className="hover:opacity-70 transition-opacity">
-            Pricing
-          </a>
-          <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
-            Try API
-            <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
-          </button>
+      {/* Navigation + Hero title: logo and headline tops aligned */}
+      <header className="relative z-20 max-w-6xl mx-auto px-6 pt-5 pb-4">
+        <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
+          <div className="flex items-start gap-4 min-w-0 flex-1 lg:flex-initial lg:max-w-2xl">
+            <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline shrink-0 pt-[0.05em]">
+              <span>Money</span>
+              <span
+                className={`inline-block min-w-[0.5em] px-[0.2em] text-center transition-opacity duration-150 ${
+                  slashVisible ? "opacity-100" : "opacity-0"
+                }`}
+                aria-hidden
+              >
+                \
+              </span>
+              <span>Line</span>
+            </a>
+            <h1 className="mt-0 pt-0 text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] min-w-0">
+              Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
+            </h1>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a] shrink-0 pt-[0.2em]">
+            <a href="#" className="hover:opacity-70 transition-opacity">
+              API
+            </a>
+            <a href="#" className="hover:opacity-70 transition-opacity">
+              Docs
+            </a>
+            <a href="/pricing" className="hover:opacity-70 transition-opacity">
+              Pricing
+            </a>
+            <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
+              Try API
+              <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
+            </button>
+          </div>
         </div>
-      </nav>
+      </header>
 
       <main className="relative z-10">
-        {/* Hero: big text on off-white */}
-        <section className="max-w-6xl mx-auto px-6 pt-16 pb-12 lg:pt-20 lg:pb-16">
+        {/* Hero: CTAs + right column */}
+        <section className="max-w-6xl mx-auto px-6 pt-2 pb-12 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div>
-              <h1 className="mt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1]">
-                Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
-              </h1>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+              <div className="mt-0 flex flex-col sm:flex-row gap-3 sm:items-center">
                 <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
                   Get API Key
                 </a>
@@ -273,9 +278,9 @@ function HomePage() {
                   <code>
                     {heroEndpointIndex === 0 && (
                       <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/odds/nba?markets=moneyline,ev&amp;books=all</span>{"\n\n"}
-                        <span className="text-[#555]">// Response — 84ms</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Lakers vs. Celtics&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;pinnacle&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-106</span><span className="text-[#888]">{"}"}</span>, <span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">{"}"}</span>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/arbitrage</span>{"\n\n"}
+                        <span className="text-[#555]">// Response</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;pairs&quot;</span><span className="text-[#888]">: [</span>{"{"}<span className="text-[#7dd3fc]">&quot;book_a&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;DK&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;book_b&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;FD&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;edge&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">2.1</span><span className="text-[#888]">{"}]}"}</span>
                       </>
                     )}
                     {heroEndpointIndex === 1 && (
@@ -287,9 +292,9 @@ function HomePage() {
                     )}
                     {heroEndpointIndex === 2 && (
                       <>
-                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/arbitrage</span>{"\n\n"}
-                        <span className="text-[#555]">// Response</span>{"\n"}
-                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;pairs&quot;</span><span className="text-[#888]">: [</span>{"{"}<span className="text-[#7dd3fc]">&quot;book_a&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;DK&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;book_b&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;FD&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;edge&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">2.1</span><span className="text-[#888]">{"}]}"}</span>
+                        <span className="text-[#7dd3fc]">GET</span> <span className="text-[#86efac]">/v1/odds/nba?markets=moneyline,ev&amp;books=all</span>{"\n\n"}
+                        <span className="text-[#555]">// Response — 84ms</span>{"\n"}
+                        <span className="text-[#888]">{"{"}</span><span className="text-[#7dd3fc]"> &quot;game&quot;</span><span className="text-[#888]">: </span><span className="text-[#86efac]">&quot;Lakers vs. Celtics&quot;</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;moneyline&quot;</span><span className="text-[#888]">: </span>{"{"}<span className="text-[#7dd3fc]">&quot;draftkings&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-108</span><span className="text-[#888]">, </span><span className="text-[#7dd3fc]">&quot;pinnacle&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">-106</span><span className="text-[#888]">{"}"}</span>, <span className="text-[#7dd3fc]">&quot;ev&quot;</span><span className="text-[#888]">: </span><span className="text-[#fbbf24]">4.7</span><span className="text-[#888]">{"}"}</span>
                       </>
                     )}
                     {heroEndpointIndex === 3 && (
@@ -465,27 +470,162 @@ function HomePage() {
             </div>
 
             <h3 className="mt-12 mb-4 text-xl font-bold text-[#1a1a1a]">The API, at a glance.</h3>
-            <div className="rounded-xl border border-[#222] bg-[#111] py-2">
-              {API_ENDPOINTS.map((ep, i) => (
-                <div
-                  key={i}
-                  className={`group flex h-12 items-center px-5 transition-colors ${i % 2 === 1 ? "bg-[#141414]" : "bg-transparent"} hover:!bg-[#1a1a1a]`}
-                >
-                  <span
-                    className={`rounded px-2 py-[3px] font-mono text-[11px] font-bold ${
-                      ep.method === "WSS"
-                        ? "bg-[#1a1a2e] text-[#93c5fd]"
-                        : "bg-[#1a2e1a] text-[#86efac]"
-                    }`}
+            <p className="mb-4 text-[14px] text-[#666]">Click an endpoint to see an example of what you could build — e.g. a sports analytics dashboard.</p>
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="w-full lg:w-1/2 rounded-xl border border-[#222] bg-[#111] py-2 overflow-hidden">
+                {API_ENDPOINTS.map((ep, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setGlanceEndpointIndex(i)}
+                    className={`group flex w-full h-12 items-center px-5 text-left transition-colors ${i % 2 === 1 ? "bg-[#141414]" : "bg-transparent"} hover:!bg-[#1a1a1a] ${glanceEndpointIndex === i ? "!bg-[#1e2a1e] ring-inset ring-1 ring-[#86efac]/40" : ""}`}
                   >
-                    {ep.method}
-                  </span>
-                  <span className="ml-3 font-mono text-[13px] text-[#ccc]">{ep.path}</span>
-                  <span className="ml-auto text-[13px] text-[#555] transition-colors group-hover:text-[#888]">{ep.desc}</span>
+                    <span
+                      className={`rounded px-2 py-[3px] font-mono text-[11px] font-bold shrink-0 ${
+                        ep.method === "WSS"
+                          ? "bg-[#1a1a2e] text-[#93c5fd]"
+                          : "bg-[#1a2e1a] text-[#86efac]"
+                      }`}
+                    >
+                      {ep.method}
+                    </span>
+                    <span className="ml-3 font-mono text-[13px] text-[#ccc] truncate">{ep.path}</span>
+                    <span className={`ml-auto text-[13px] shrink-0 transition-colors ${glanceEndpointIndex === i ? "text-[#86efac]" : "text-[#555] group-hover:text-[#888]"}`}>{ep.desc}</span>
+                  </button>
+                ))}
+                <div className="mt-2 px-5 pb-1 text-right">
+                  <a href="/docs" className="text-[13px] text-[#b5c400] no-underline hover:underline">View full API reference →</a>
                 </div>
-              ))}
-              <div className="mt-2 px-5 pb-1 text-right">
-                <a href="/docs" className="text-[13px] text-[#b5c400] no-underline hover:underline">View full API reference →</a>
+              </div>
+              <div className="w-full lg:w-1/2 flex flex-col">
+                <div className="rounded-xl border border-[#e8e8e4] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden flex-1 min-h-[280px]">
+                  <div className="px-4 py-2.5 border-b border-[#eee] bg-[#fafafa] text-[12px] font-medium text-[#555]">
+                    Example: Sports analytics app
+                  </div>
+                  <div className="p-4 text-[13px] text-[#333]">
+                    {glanceEndpointIndex === 0 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Live arb opportunities</div>
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="border-b border-[#e0e0e0]">
+                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Books</th>
+                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Sport</th>
+                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Edge %</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-[12px]">
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">DK / FD</td><td>NBA</td><td className="text-right text-[#0d9488] font-medium">2.1%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">Pinnacle / BetMGM</td><td>NFL</td><td className="text-right text-[#0d9488] font-medium">1.8%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-2">FD / Caesars</td><td>MLB</td><td className="text-right text-[#0d9488] font-medium">1.4%</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 1 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">EV by game (moneyline)</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
+                            <span>Lakers vs. Celtics</span>
+                            <span className="text-[#0d9488] font-medium">+4.7% EV</span>
+                          </div>
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
+                            <span>Chiefs vs. Bills</span>
+                            <span className="text-[#0d9488] font-medium">+2.2% EV</span>
+                          </div>
+                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0]">
+                            <span>Yankees vs. Red Sox</span>
+                            <span className="text-[#b91c1c] font-medium">−0.8% EV</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 2 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Odds comparison — Lakers vs. Celtics</div>
+                        <table className="w-full text-left border-collapse text-[12px]">
+                          <thead>
+                            <tr className="border-b border-[#e0e0e0]">
+                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Book</th>
+                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Moneyline</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Pinnacle</td><td className="text-right">−106</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">DraftKings</td><td className="text-right">−108</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">FanDuel</td><td className="text-right">−112</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 3 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Player props — LeBron James</div>
+                        <table className="w-full text-left border-collapse text-[12px]">
+                          <thead>
+                            <tr className="border-b border-[#e0e0e0]">
+                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Prop</th>
+                              <th className="pb-2 text-[11px] uppercase text-[#777] font-medium">Line</th>
+                              <th className="pb-2 text-right text-[11px] uppercase text-[#777] font-medium">Best book</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Points</td><td>24.5</td><td className="text-right">DraftKings</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Rebounds</td><td>7.5</td><td className="text-right">FanDuel</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Assists</td><td>6.5</td><td className="text-right">BetMGM</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 4 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Live scores</div>
+                        <div className="rounded-lg bg-[#f5f5f5] p-4">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">LAL</span>
+                            <span className="text-2xl font-bold tabular-nums">98</span>
+                            <span className="text-[#777] text-[12px]">Q4 2:34</span>
+                            <span className="text-2xl font-bold tabular-nums">102</span>
+                            <span className="font-medium">BOS</span>
+                          </div>
+                          <p className="text-[11px] text-[#888] mt-2 text-center">Lakers vs. Celtics · Live</p>
+                        </div>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 5 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Real-time line movement</div>
+                        <div className="rounded-lg bg-[#f5f5f5] p-3 font-mono text-[11px] space-y-1.5">
+                          <div className="flex justify-between"><span>nba_lal_bos</span><span className="text-[#0d9488]">moneyline −108 → −106</span></div>
+                          <div className="flex justify-between"><span>nfl_kc_buf</span><span className="text-[#b91c1c]">spread −3 → −3.5</span></div>
+                          <div className="flex justify-between"><span>nba_den_phx</span><span className="text-[#0d9488]">total 218.5 → 219</span></div>
+                        </div>
+                      </div>
+                    )}
+                    {glanceEndpointIndex === 6 && (
+                      <div className="space-y-3">
+                        <div className="font-semibold text-[#1a1a1a]">Prediction markets</div>
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-[12px] text-[#666] mb-1">Chiefs win Super Bowl</p>
+                            <div className="h-2 bg-[#e5e5e5] rounded-full overflow-hidden flex">
+                              <div className="h-full w-[67%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                            </div>
+                            <p className="text-[11px] text-[#888] mt-0.5">67% yes · Polymarket</p>
+                          </div>
+                          <div>
+                            <p className="text-[12px] text-[#666] mb-1">Fed rate cut by June</p>
+                            <div className="h-2 bg-[#e5e5e5] rounded-full overflow-hidden flex">
+                              <div className="h-full w-[42%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                            </div>
+                            <p className="text-[11px] text-[#888] mt-0.5">42% yes · Kalshi</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
