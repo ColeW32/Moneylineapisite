@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  /* Anthropic / Claude-inspired dark palette */
+  --color-page-bg: #050816;         /* deep ink */
+  --color-shell: #050816;           /* for body */
+  --color-surface-soft: #0b1020;
+  --color-surface-strong: #111827;
+  --color-border-subtle: #1f2937;
+  --color-text-main: #f9fafb;
+  --color-text-soft: #9ca3af;
+  --color-accent: #22c55e;          /* calm green accent */
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-shell);
+  color: var(--color-text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
