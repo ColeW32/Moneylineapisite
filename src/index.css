@@ -1,26 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  /* Anthropic / Claude-inspired dark palette */
-  --color-page-bg: #050816;         /* deep ink */
-  --color-shell: #050816;           /* for body */
-  --color-surface-soft: #0b1020;
-  --color-surface-strong: #111827;
-  --color-border-subtle: #1f2937;
-  --color-text-main: #f9fafb;
-  --color-text-soft: #9ca3af;
-  --color-accent: #22c55e;          /* calm green accent */
+  /* Anthropic-style light theme */
+  --color-page-bg: #f5f2eb;           /* off-white / tan */
+  --color-shell: #f5f2eb;
+  --color-off-black: #1a1a1a;
+  --color-off-black-soft: #2d2d2d;
+  --color-text-on-light: #1a1a1a;
+  --color-text-muted: #4a4a4a;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--color-shell);
-  color: var(--color-text-main);
+  color: var(--color-text-on-light);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
