@@ -226,7 +226,7 @@ function HomePage() {
         {/* Hero: big text on off-white */}
         <section className="max-w-6xl mx-auto px-6 pt-16 pb-12 lg:pt-20 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1]">
+            <h1 className="mt-0 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1]">
               Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
             </h1>
             <div>
