@@ -22,3 +22,51 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+.odds-ticker {
+  position: relative;
+  overflow: hidden;
+  background-color: #e8e6e0;
+}
+
+.odds-ticker::before,
+.odds-ticker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.odds-ticker::before {
+  left: 0;
+  background: linear-gradient(to right, #f5f2eb, rgba(232, 230, 224, 0));
+}
+
+.odds-ticker::after {
+  right: 0;
+  background: linear-gradient(to left, #f5f2eb, rgba(232, 230, 224, 0));
+}
+
+.odds-ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  white-space: nowrap;
+  animation: odds-marquee 25s linear infinite;
+}
+
+.odds-ticker:hover .odds-ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes odds-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
