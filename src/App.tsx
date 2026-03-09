@@ -117,7 +117,7 @@ const INTEGRATION_RESPONSE_JSON = `{
   "updated_ms": 84
 }`;
 
-function App() {
+function HomePage() {
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -929,6 +929,184 @@ function App() {
       </main>
     </div>
   );
+}
+
+function App() {
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+  if (pathname.startsWith("/pricing")) {
+    // Reuse the pricing teaser section as the main content for now.
+    return (
+      <div className="min-h-screen bg-[#fafafa] text-[#111827]">
+        <main className="relative z-10">
+          <section className="bg-[#fafafa] py-[100px]">
+            <div className="max-w-6xl mx-auto px-6">
+              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[#111827]">
+                Simple, transparent pricing.
+              </h1>
+              <p className="mt-3 text-base sm:text-lg text-[#4b5563] max-w-2xl">
+                Start building today. Scale when you're ready.
+              </p>
+
+              <div className="mt-8 flex justify-center">
+                <div className="inline-flex flex-col items-center text-center gap-2 rounded-full bg-[#e8ff47] px-8 py-4 shadow-sm">
+                  <span className="text-xl sm:text-2xl font-extrabold text-[#111827]">
+                    2 months free.
+                  </span>
+                  <span className="text-xs sm:text-sm font-medium text-[#111827]">
+                    On any plan. No credit card required to start.
+                  </span>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-[#6b7280] text-center max-w-xl mx-auto">
+                Pick the plan that fits. Your first 2 months are on us on every paid tier — then billing starts automatically.
+              </p>
+
+              {/* Tier cards reused from homepage */}
+              <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Starter */}
+                <div className="rounded-[12px] border border-[#e0e0e0] bg-white p-8 flex flex-col h-full">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
+                    Starter
+                  </h2>
+                  <p className="mt-2 text-2xl font-bold text-[#111827]">
+                    $0 <span className="text-sm font-normal text-[#6b7280]">/ month</span>
+                  </p>
+                  <p className="mt-2 text-sm text-[#6b7280]">
+                    For builders and experimenters
+                  </p>
+                  <ul className="mt-5 text-[14px] text-[#4b5563]">
+                    {[
+                      "1,000 requests/day",
+                      "10 sportsbooks covered",
+                      "REST API access",
+                      "Community support",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 leading-7">
+                        <span className="mt-[2px] text-[#22c55e]">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <a
+                      href="/get-started"
+                      className="inline-flex items-center justify-center rounded-full bg-[#111827] text-white px-5 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity no-underline"
+                    >
+                      Start for free →
+                    </a>
+                    <p className="text-[12px] text-[#6b7280]">
+                      No time limit on the free tier.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pro */}
+                <div className="relative rounded-[12px] border border-[#1f2937] bg-[#111] text-white p-8 pt-9 flex flex-col h-full shadow-[0_8px_32px_rgba(0,0,0,0.18)]">
+                  <div className="absolute -top-3 left-6">
+                    <span className="rounded-full bg-[#e8ff47] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-black">
+                      Most popular
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9ca3af]">
+                        Pro
+                      </h2>
+                      <p className="mt-2 text-3xl font-bold text-white">
+                        $99 <span className="text-sm font-normal text-[#9ca3af]">/ month</span>
+                      </p>
+                      <p className="mt-1 text-[12px] text-[#9ca3af]">
+                        After your first 2 free months.
+                      </p>
+                    </div>
+                    <span className="rounded bg-[#e8ff47] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-black">
+                      2 months free
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm text-[#d1d5db]">
+                    For serious quants and traders
+                  </p>
+                  <ul className="mt-5 text-[14px] text-[#e5e7eb]">
+                    {[
+                      "Unlimited requests",
+                      "100+ sportsbooks normalized",
+                      "WebSocket real-time streaming",
+                      "Pre-computed EV + arbitrage signals",
+                      "Player props across all books",
+                      "Email support",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 leading-7">
+                        <span className="mt-[2px] text-[#22c55e]">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <a
+                      href="/get-started"
+                      className="inline-flex items-center justify-center rounded-full bg-[#e8ff47] text-black px-5 py-2.5 text-sm font-semibold hover:bg-[#d6ec3e] transition-colors no-underline"
+                    >
+                      Claim 2 free months →
+                    </a>
+                  </div>
+                </div>
+
+                {/* Enterprise */}
+                <div className="rounded-[12px] border border-[#e0e0e0] bg-white p-8 flex flex-col h-full">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
+                    Enterprise
+                  </h2>
+                  <p className="mt-2 text-2xl font-bold text-[#111827]">
+                    Custom
+                  </p>
+                  <p className="mt-2 text-sm text-[#6b7280]">
+                    For funds, media platforms, and trading firms
+                  </p>
+                  <ul className="mt-5 text-[14px] text-[#4b5563]">
+                    {[
+                      "Everything in Pro",
+                      "SLA uptime guarantee",
+                      "Dedicated account support",
+                      "Custom data feeds",
+                      "White-glove onboarding",
+                      "2 months free on annual contracts",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 leading-7">
+                        <span className="mt-[2px] text-[#22c55e]">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <a
+                      href="/contact"
+                      className="inline-flex items-center justify-center rounded-full bg-[#111827] text-white px-5 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity no-underline"
+                    >
+                      Contact us →
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center">
+                <p className="text-[13px] text-[#888]">
+                  2 free months applied automatically at signup. Cancel anytime. No hidden fees.
+                </p>
+                <a
+                  href="/pricing"
+                  className="mt-2 inline-block text-[13px] text-[#b5c400] hover:underline"
+                >
+                  See full pricing details →
+                </a>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
+  return <HomePage />;
 }
 
 export default App;
