@@ -1494,50 +1494,60 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a] flex flex-col">
-      {/* Shared navigation from homepage */}
-      <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-        <Logo className="text-[#1a1a1a]" />
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
-          <a
-            href="/#api"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate?.("/#api");
-            }}
-            className="hover:opacity-70 transition-opacity"
-          >
-            API
-          </a>
-          <a
-            href="/docs"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate?.("/docs");
-            }}
-            className="hover:opacity-70 transition-opacity"
-          >
-            Docs
-          </a>
-          <a
-            href="/pricing"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate?.("/pricing");
-            }}
-            className="hover:opacity-70 transition-opacity"
-          >
-            Pricing
-          </a>
-          <a
-            href="/get-started"
-            onClick={(e) => { e.preventDefault(); navigate?.("/get-started"); }}
-            className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
-          >
-            Try API
-            <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
-          </a>
-        </div>
-      </nav>
+      {/* Navigation – mirrors homepage spacing and hierarchy */}
+      <header className="flex-shrink-0 border-b border-[#e5e7eb]/70 bg-[#f5f2eb]/95">
+        <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+          <Logo className="text-[#1a1a1a]" />
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
+            <a
+              href="/#api"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate?.("/#api");
+              }}
+              className="hover:opacity-70 transition-opacity"
+            >
+              API
+            </a>
+            <a
+              href="/docs"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate?.("/docs");
+              }}
+              className="hover:opacity-70 transition-opacity"
+            >
+              Docs
+            </a>
+            <a
+              href="/pricing"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate?.("/pricing");
+              }}
+              className="hover:opacity-70 transition-opacity"
+            >
+              Pricing
+            </a>
+            <a
+              href="/get-started"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate?.("/get-started");
+              }}
+              className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
+            >
+              Get API key
+              <span
+                className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]"
+                aria-hidden
+              >
+                →
+              </span>
+            </a>
+          </div>
+        </nav>
+      </header>
 
       <main className="flex-1">
         <div className="max-w-6xl mx-auto px-6 py-10 lg:py-16 grid lg:grid-cols-2 gap-12 items-center">
