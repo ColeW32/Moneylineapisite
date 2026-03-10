@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+
+const NavigateContext = createContext<((path: string) => void) | null>(null);
 
 const TICKER_ITEMS = [
   { label: "LAL/BOS · ML −108", trend: "up", arrow: "↑" },
@@ -335,6 +337,7 @@ function highlightSnippetBody(body: string) {
 }
 
 function HomePage() {
+  const navigate = useContext(NavigateContext);
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -426,19 +429,23 @@ function HomePage() {
           <span>Line</span>
         </a>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
-          <a href="#" className="hover:opacity-70 transition-opacity">
+          <a href="/#api" className="hover:opacity-70 transition-opacity">
             API
           </a>
-          <a href="#" className="hover:opacity-70 transition-opacity">
+          <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="hover:opacity-70 transition-opacity">
             Docs
           </a>
           <a href="/pricing" className="hover:opacity-70 transition-opacity">
             Pricing
           </a>
-          <button className="group rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a]">
+          <a
+            href="/get-started"
+            onClick={(e) => { e.preventDefault(); navigate?.("/get-started"); }}
+            className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
+          >
             Try API
             <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -454,17 +461,17 @@ function HomePage() {
                 <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
                   Get API Key
                 </a>
-                <a href="/docs" className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline">
+                <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline">
                   Explore Docs
                 </a>
               </div>
               <p className="mt-4 text-xs text-[#4a4a4a]/90">
-                Trusted by DFS operators, Sportsbooks, Sports data analytics platforms, and Quant funds.
+                Trusted by DFS operators, sportsbooks, sports analytics platforms, and trading teams.
               </p>
             </div>
             <div className="pt-1">
               <p className="mt-0 text-lg text-[#4a4a4a] leading-relaxed lg:pb-1">
-                MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for quants, traders, and product teams.
+                MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for founders, developers, and traders building sports analytics and betting products.
               </p>
               {/* Endpoint selector */}
               <div className="mt-6 overflow-x-auto pb-2 -mx-1 px-1">
@@ -597,9 +604,9 @@ function HomePage() {
                   <svg className="mb-3 h-6 w-6 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
-                  <h3 className="mb-1.5 text-base font-bold text-white">Quants &amp; Modelers</h3>
+                  <h3 className="mb-1.5 text-base font-bold text-white">Founders &amp; Developers</h3>
                   <p className="text-sm text-[#888] leading-relaxed" style={{ lineHeight: 1.6 }}>
-                    Normalized historical and live data ready for model ingestion. Consistent schema across every book. No cleaning required.
+                    Build sports analytics sites, DFS apps, and sports betting products on one API. Normalized schema across every book. No cleaning required.
                   </p>
                 </div>
                 <div className="rounded-[10px] border border-[#2a2a2a] bg-[#1a1a1a] p-5 transition-all duration-200 hover:border-[#444] hover:-translate-y-0.5">
@@ -1332,7 +1339,7 @@ function HomePage() {
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-[#d1d5db]">
-                  For serious quants and traders
+                  For serious developers and traders
                 </p>
                 <ul className="mt-5 text-[14px] text-[#e5e7eb]">
                   {[
@@ -1420,7 +1427,7 @@ function HomePage() {
               {[
                 {
                   quote: "We replaced three separate scraping jobs with one MoneyLine API call. Our data pipeline went from a daily maintenance headache to something we never think about.",
-                  attribution: "Quant Developer, Sports Trading Fund",
+                  attribution: "Developer, Sports Analytics Platform",
                 },
                 {
                   quote: "The EV and arbitrage signals are pre-computed and accurate. That's hours of work we're not doing anymore. Worth every dollar.",
@@ -1473,62 +1480,68 @@ function HomePage() {
 }
 
 function AuthPage() {
+  const navigate = useContext(NavigateContext);
   const [mode, setMode] = useState<"signup" | "login">("signup");
 
   const isSignup = mode === "signup";
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white flex flex-col">
-      <header className="border-b border-slate-800 bg-[#020617]/80 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
-          <a href="/" className="flex items-center gap-1.5 font-bold text-white no-underline">
-            <span>Money</span>
-            <span className="inline-block min-w-[0.5em] text-center">\\</span>
-            <span>Line</span>
+    <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a] flex flex-col">
+      {/* Shared navigation from homepage */}
+      <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+        <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
+          <span>Money</span>
+          <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
+          <span>Line</span>
+        </a>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
+          <a href="/#api" className="hover:opacity-70 transition-opacity">
+            API
           </a>
-          <div className="flex items-center gap-4 text-sm">
-            <button
-              type="button"
-              onClick={() => setMode("login")}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium border transition-colors ${
-                isSignup
-                  ? "border-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-900/60"
-                  : "border-slate-500 bg-slate-900/80 text-white"
-              }`}
-            >
-              Log in
-            </button>
-          </div>
+          <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="hover:opacity-70 transition-opacity">
+            Docs
+          </a>
+          <a href="/pricing" className="hover:opacity-70 transition-opacity">
+            Pricing
+          </a>
+          <a
+            href="/get-started"
+            onClick={(e) => { e.preventDefault(); navigate?.("/get-started"); }}
+            className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
+          >
+            Try API
+            <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
+          </a>
         </div>
-      </header>
+      </nav>
 
       <main className="flex-1">
-        <div className="max-w-5xl mx-auto px-6 py-10 lg:py-16 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-6xl mx-auto px-6 py-10 lg:py-16 grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-5">
-            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-300">
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#6b7280]">
               Get your API key
             </p>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-              You&apos;re one step away from getting your API key.
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#1a1a1a]">
+              You&apos;re one step away from <span className="underline decoration-2 underline-offset-2">getting your API key</span>.
             </h1>
-            <p className="text-sm sm:text-[15px] text-slate-300 max-w-md">
+            <p className="text-sm sm:text-[15px] text-[#4a4a4a] max-w-md">
               Create an account to start pulling normalized odds, props, EV and arbitrage signals, scores, and prediction
               markets from 100+ sportsbooks. No credit card required to get started.
             </p>
-            <ul className="mt-4 space-y-1.5 text-[13px] text-slate-300">
+            <ul className="mt-4 space-y-1.5 text-[13px] text-[#4a4a4a]">
               <li>• 1,000 free requests on the Starter tier</li>
               <li>• Upgrade to Pro when you&apos;re ready — first 2 months free</li>
-              <li>• Designed for quants, traders, and product teams</li>
+              <li>• Designed for founders, developers, and traders building sports and betting products</li>
             </ul>
           </div>
 
-          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 shadow-[0_18px_45px_rgba(0,0,0,0.65)] p-6 sm:p-7">
+          <div className="rounded-2xl bg-white border border-[#e5e7eb] shadow-[0_18px_45px_rgba(0,0,0,0.08)] p-6 sm:p-7">
             <div className="flex items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-[#111827]">
                   {isSignup ? "Create your MoneyLine account" : "Log in"}
                 </h2>
-                <p className="text-[12px] text-slate-400 mt-0.5">
+                <p className="text-[12px] text-[#6b7280] mt-0.5">
                   {isSignup
                     ? "We’ll generate an API key for you as soon as you finish signup."
                     : "Use your existing credentials to access your dashboard and keys."}
@@ -1537,7 +1550,7 @@ function AuthPage() {
               <button
                 type="button"
                 onClick={() => setMode(isSignup ? "login" : "signup")}
-                className="hidden sm:inline-flex items-center rounded-full border border-slate-700 text-slate-200 px-3 py-1.5 text-[11px] font-medium hover:bg-slate-800/80 transition-colors"
+                className="hidden sm:inline-flex items-center rounded-full border border-[#d1d5db] text-[#4b5563] px-3 py-1.5 text-[11px] font-medium hover:bg-[#f3f4f6] transition-colors"
               >
                 {isSignup ? "Have an account? Log in" : "New here? Create account"}
               </button>
@@ -1546,62 +1559,63 @@ function AuthPage() {
             <form className="space-y-4">
               {isSignup && (
                 <div className="space-y-1.5">
-                  <label className="block text-[12px] font-medium text-slate-200">Full name</label>
+                  <label className="block text-[12px] font-medium text-[#111827]">Full name</label>
                   <input
                     type="text"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                    className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
                     placeholder="Ada Lovelace"
                   />
                 </div>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[12px] font-medium text-slate-200">Work email</label>
+                <label className="block text-[12px] font-medium text-[#111827]">Work email</label>
                 <input
                   type="email"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                  className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
                   placeholder="you@fund-or-company.com"
                 />
               </div>
               {isSignup && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="block text-[12px] font-medium text-slate-200">Organization</label>
+                    <label className="block text-[12px] font-medium text-[#111827]">Organization</label>
                     <input
                       type="text"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                      className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
                       placeholder="Acme Trading Fund"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[12px] font-medium text-slate-200">Role</label>
-                    <select className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent">
-                      <option>Quant / Researcher</option>
-                      <option>Engineer</option>
-                      <option>Trader</option>
-                      <option>Product / Founder</option>
+                    <label className="block text-[12px] font-medium text-[#111827]">Role</label>
+                    <select className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent">
+                      <option>Founder</option>
+                      <option>Developer</option>
+                      <option>DFS / Sports analytics</option>
+                      <option>Sports betting</option>
+                      <option>Individual trader</option>
                       <option>Other</option>
                     </select>
                   </div>
                 </div>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[12px] font-medium text-slate-200">Password</label>
+                <label className="block text-[12px] font-medium text-[#111827]">Password</label>
                 <input
                   type="password"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                  className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
                   placeholder={isSignup ? "Create a strong password" : "Enter your password"}
                 />
               </div>
               {isSignup && (
-                <label className="mt-1.5 flex items-start gap-2 text-[11px] text-slate-400">
-                  <input type="checkbox" className="mt-[2px] h-3.5 w-3.5 rounded border-slate-600 bg-slate-950" />
+                <label className="mt-1.5 flex items-start gap-2 text-[11px] text-[#6b7280]">
+                  <input type="checkbox" className="mt-[2px] h-3.5 w-3.5 rounded border-[#d1d5db] bg-white" />
                   <span>
                     I agree to the{" "}
-                    <a href="#" className="underline decoration-slate-500 hover:text-emerald-300">
+                    <a href="#" className="underline decoration-[#9ca3af] hover:text-[#111827]">
                       Terms
                     </a>{" "}
                     and{" "}
-                    <a href="#" className="underline decoration-slate-500 hover:text-emerald-300">
+                    <a href="#" className="underline decoration-[#9ca3af] hover:text-[#111827]">
                       Privacy Policy
                     </a>
                     .
@@ -1611,18 +1625,18 @@ function AuthPage() {
 
               <button
                 type="button"
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2.5 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
+                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#1a1a1a] text-white px-4 py-2.5 text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
               >
                 {isSignup ? "Create account & get API key →" : "Log in →"}
               </button>
             </form>
 
-            <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400">
+            <div className="mt-4 flex items-center justify-between text-[11px] text-[#6b7280]">
               <span>Secure by design · You can rotate or revoke keys anytime.</span>
               <button
                 type="button"
                 onClick={() => setMode(isSignup ? "login" : "signup")}
-                className="sm:hidden underline decoration-slate-500 hover:text-emerald-300"
+                className="sm:hidden underline decoration-[#9ca3af] hover:text-[#111827]"
               >
                 {isSignup ? "Log in" : "Create account"}
               </button>
@@ -1659,90 +1673,104 @@ function App() {
     return () => document.removeEventListener("click", handleClick, true);
   }, []);
 
+  const navigate = useCallback((path: string) => {
+    window.history.pushState({}, "", path);
+    setPathname(new URL(path, window.location.origin).pathname);
+  }, []);
+
   if (pathname.startsWith("/get-started")) {
-    return <AuthPage />;
+    return (
+      <NavigateContext.Provider value={navigate}>
+        <AuthPage />
+      </NavigateContext.Provider>
+    );
   }
   if (pathname.startsWith("/docs")) {
     return (
-      <div className="min-h-screen bg-[#0f172a] text-white">
-        <header className="border-b border-white/10 bg-[#020617]/80 backdrop-blur">
-          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
-            <a href="/" className="flex items-center gap-1.5 font-bold text-white no-underline">
-              <span>Money</span>
-              <span className="inline-block min-w-[0.5em] text-center">\\</span>
-              <span>Line</span>
-              <span className="ml-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-[2px] text-[10px] font-mono uppercase tracking-[0.16em] text-emerald-200">
-                API Docs
-              </span>
+      <NavigateContext.Provider value={navigate}>
+      <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a]">
+        {/* Shared light nav matching homepage */}
+        <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+          <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
+            <span>Money</span>
+            <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
+            <span>Line</span>
+            <span className="ml-2 rounded-full border border-[#e5e7eb] bg-white px-2 py-[2px] text-[10px] font-mono uppercase tracking-[0.16em] text-[#4b5563]">
+              Docs
+            </span>
+          </a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
+            <a href="/#api" className="hover:opacity-70 transition-opacity">
+              API
             </a>
-            <div className="hidden md:flex items-center gap-6 text-sm">
-              <a href="/#api" className="text-white/70 hover:text-white transition-colors no-underline">
-                API overview
-              </a>
-              <a href="/pricing" className="text-white/70 hover:text-white transition-colors no-underline">
-                Pricing
-              </a>
-              <a
-                href="/get-started"
-                className="inline-flex items-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
-              >
-                Get API key
-              </a>
-            </div>
+            <a href="/docs" onClick={(e) => { e.preventDefault(); navigate("/docs"); }} className="hover:opacity-70 transition-opacity" aria-current="page">
+              Docs
+            </a>
+            <a href="/pricing" className="hover:opacity-70 transition-opacity">
+              Pricing
+            </a>
+            <a
+              href="/get-started"
+              onClick={(e) => { e.preventDefault(); navigate("/get-started"); }}
+              className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
+            >
+              Get API key
+              <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
+            </a>
           </div>
-        </header>
+        </nav>
 
         <main className="max-w-6xl mx-auto px-6 py-10 lg:py-14">
-          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10">
+          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start">
             {/* Sidebar nav */}
             <aside className="space-y-6">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   Getting started
                 </p>
                 <nav className="space-y-1 text-[13px]">
-                  <a href="#introduction" className="block px-2 py-1.5 rounded-md bg-white/5 text-white no-underline">
+                  <a href="#introduction" className="block px-2 py-1.5 rounded-md bg-[#111]/5 text-[#111827] no-underline">
                     Introduction
                   </a>
-                  <a href="#auth" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#auth" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     Authentication
                   </a>
-                  <a href="#errors" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#errors" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     Errors & rate limits
                   </a>
                 </nav>
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   REST endpoints
                 </p>
                 <nav className="space-y-1 text-[13px]">
-                  <a href="#odds" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#odds" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/odds/{`{sport}`}
                   </a>
-                  <a href="#ev" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#ev" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/ev/{`{sport}`}
                   </a>
-                  <a href="#arbitrage" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#arbitrage" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/arbitrage
                   </a>
-                  <a href="#props" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#props" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/props/{`{sport}`}
                   </a>
-                  <a href="#scores" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#scores" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/scores/{`{sport}`}
                   </a>
-                  <a href="#prediction" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#prediction" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     GET /v1/prediction
                   </a>
                 </nav>
               </div>
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   Streaming
                 </p>
                 <nav className="space-y-1 text-[13px]">
-                  <a href="#stream" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                  <a href="#stream" className="block px-2 py-1.5 rounded-md text-[#4b5563] hover:bg-[#111]/5 no-underline">
                     WSS /v1/stream
                   </a>
                 </nav>
@@ -1751,63 +1779,176 @@ function App() {
 
             {/* Main docs content */}
             <section className="space-y-12">
+              {/* Intro */}
               <section id="introduction" className="space-y-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
                   MoneyLine API
                 </p>
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-                  Build sports trading systems in minutes.
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111827]">
+                  Production-ready sports data in a single API.
                 </h1>
-                <p className="text-sm sm:text-[15px] text-slate-300 max-w-2xl">
-                  MoneyLine normalizes odds, props, EV and arbitrage signals, scores, and prediction markets into a single schema
-                  across 100+ sportsbooks. This page covers the core REST endpoints and WebSocket stream you'll use to power
-                  dashboards, models, and production trading systems.
+                <p className="text-sm sm:text-[15px] text-[#4b5563] max-w-2xl">
+                  MoneyLine delivers normalized odds, props, pre-computed EV and arbitrage signals, scores, and prediction markets
+                  across 100+ books. These docs mirror the examples on the homepage so you can go from idea → live system quickly.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-1">
                   <a
                     href="/get-started"
-                    className="inline-flex items-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
+                    className="inline-flex items-center rounded-full bg-[#111827] text-white px-4 py-2 text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
                   >
                     Get API key
                   </a>
                   <a
-                    href="/"
-                    className="inline-flex items-center rounded-full border border-slate-700 text-slate-100 px-4 py-2 text-sm font-medium no-underline hover:bg-white/5 transition-colors"
+                    href="/#api"
+                    className="inline-flex items-center rounded-full border border-[#d4d4d4] text-[#111827] px-4 py-2 text-sm font-medium no-underline hover:bg-black/5 transition-colors"
                   >
-                    Back to marketing site
+                    View homepage examples
                   </a>
                 </div>
               </section>
 
+              {/* Auth */}
               <section id="auth" className="space-y-3">
-                <h2 className="text-xl font-semibold text-white">Authentication</h2>
-                <p className="text-sm text-slate-300">
-                  All requests are authenticated with a **Bearer** API key. You can create and manage keys in your MoneyLine
-                  dashboard. Keys are scoped to your account and environment.
+                <h2 className="text-xl font-semibold text-[#111827]">Authentication</h2>
+                <p className="text-sm text-[#4b5563]">
+                  All requests use a **Bearer** API key in the <code className="font-mono text-[11px]">Authorization</code> header. You can
+                  create and rotate keys in the MoneyLine dashboard.
                 </p>
-                <pre className="mt-2 rounded-lg bg-black/60 border border-slate-800 p-4 text-[12px] font-mono text-slate-100 overflow-x-auto">
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <div className="mb-1 text-[11px] text-[#a5b4fc]">curl</div>
+                  <pre className="whitespace-pre">
 {`curl https://api.moneyline.io/v1/odds \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -G --data-urlencode "sport=nba"`}
-                </pre>
-                <p className="text-[12px] text-slate-400">
-                  Send your key in the <code className="font-mono text-[11px]">Authorization</code> header. Do not send keys in query strings
-                  or client-side code that ships to browsers.
+                  </pre>
+                </div>
+                <p className="text-[12px] text-[#6b7280]">
+                  Never embed secret keys in client-side code. Backends, CRON jobs, and serverless functions should read keys from
+                  environment variables.
                 </p>
               </section>
 
-              {/* Endpoint sections would continue here – odds, ev, arbitrage, props, scores, stream, prediction – each with
-                  query parameters and a shortened version of the robust example responses already on the homepage. */}
+              {/* Odds */}
+              <section id="odds" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/odds/{`{sport}`}</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  The primary odds endpoint. Returns normalized moneyline, spread, and total markets across all tracked books, plus
+                  sharp-derived signals like <code className="font-mono text-[11px]">ev_vs_best</code> and{" "}
+                  <code className="font-mono text-[11px]">market_signals</code>.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
+                    Query parameters
+                  </p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">sport</span> — required, e.g. <span className="font-mono">'nba'</span>, <span className="font-mono">'nfl'</span>.</li>
+                    <li><span className="font-mono text-[12px]">markets</span> — optional, comma-separated: <span className="font-mono">moneyline,spread,total,team_total</span>.</li>
+                    <li><span className="font-mono text-[12px]">books</span> — optional, comma-separated list or <span className="font-mono">'all'</span>.</li>
+                    <li><span className="font-mono text-[12px]">status</span> — optional, <span className="font-mono">pregame|live|all</span>.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <div className="mb-1 text-[11px] text-[#a5b4fc]">Response (truncated)</div>
+                  <pre className="whitespace-pre">
+{`{
+  "meta": { "sport": "nba", "games_returned": 8, "books_tracked": 12, "latency_ms": 84 },
+  "games": [
+    {
+      "game_id": "nba_lal_bos_20260309_1930",
+      "home_team": { "name": "Boston Celtics", "abbreviation": "BOS" },
+      "away_team": { "name": "Los Angeles Lakers", "abbreviation": "LAL" },
+      "markets": {
+        "moneyline": { "home": { "best_price": -106, "best_book": "pinnacle", "ev_vs_best": 0.48 }, ... },
+        "spread": { "home": { "best_line": -3.5, "line_move": -0.5 }, ... },
+        "total": { "over": { "best_line": 224.5 }, "line_move": 1.5 }
+      },
+      "market_signals": { "sharp_action_detected": true, "sharp_side": "home" }
+    }
+  ]
+}`}
+                  </pre>
+                </div>
+              </section>
+
+              {/* EV */}
+              <section id="ev" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/ev/{`{sport}`}</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Returns pre-computed +EV opportunities sorted by edge. Each opportunity contains fair line reference,{" "}
+                  <code className="font-mono text-[11px]">ev_pct</code>, <code className="font-mono text-[11px]">ev_per_100</code>, Kelly
+                  sizing, CLV expectation, and a composite <code className="font-mono text-[11px]">quality_score</code>.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
+                    Query parameters
+                  </p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">sport</span> — required, e.g. <span className="font-mono">'nba'</span> or <span className="font-mono">'all'</span>.</li>
+                    <li><span className="font-mono text-[12px]">market_types</span> — e.g. <span className="font-mono">'moneyline,spread,total'</span>.</li>
+                    <li><span className="font-mono text-[12px]">min_ev</span> — minimum EV% threshold, defaults to 0.5.</li>
+                    <li><span className="font-mono text-[12px]">sharp_ref</span> — <span className="font-mono">pinnacle|circa|consensus</span>, controls fair line source.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <pre className="whitespace-pre">
+{`{
+  "meta": { "sport": "nba", "sharp_ref": "pinnacle", "min_ev_filter": 1.0 },
+  "opportunities": [
+    {
+      "game": { "home_team": "Boston Celtics", "away_team": "Los Angeles Lakers" },
+      "market": { "type": "moneyline", "side": "home", "description": "Celtics ML" },
+      "target_book": { "book": "draftkings", "price": 105 },
+      "sharp_reference": { "book": "pinnacle", "price": -108, "no_vig_prob": 0.5194 },
+      "ev": { "ev_pct": 4.7, "ev_per_100": 4.70, "kelly_fraction": 0.047, "half_kelly": 0.024 },
+      "quality_score": 78
+    }
+  ]
+}`}
+                  </pre>
+                </div>
+              </section>
+
+              {/* Arbitrage, Props, Scores, Stream, Prediction could follow the same pattern; omitted here for brevity in code,
+                  but the schemas and examples are already reflected in the homepage hero and "API at a glance" section. */}
             </section>
           </div>
         </main>
       </div>
+      </NavigateContext.Provider>
     );
   }
   if (pathname.startsWith("/pricing")) {
-    // Reuse the pricing teaser section as the main content for now.
     return (
+      <NavigateContext.Provider value={navigate}>
       <div className="min-h-screen bg-[#fafafa] text-[#111827]">
+        {/* Navigation matching homepage */}
+        <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+          <a href="/" className="flex items-center gap-0 font-bold text-[#111827] tracking-tight text-lg sm:text-xl no-underline">
+            <span>Money</span>
+            <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
+            <span>Line</span>
+          </a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#111827]">
+            <a href="/#api" className="hover:opacity-70 transition-opacity">
+              API
+            </a>
+            <a href="/docs" onClick={(e) => { e.preventDefault(); navigate("/docs"); }} className="hover:opacity-70 transition-opacity">
+              Docs
+            </a>
+            <a href="/pricing" className="hover:opacity-70 transition-opacity">
+              Pricing
+            </a>
+            <a
+              href="/get-started"
+              onClick={(e) => { e.preventDefault(); navigate("/get-started"); }}
+              className="group inline-flex items-center rounded-full bg-[#111827] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#111827] no-underline"
+            >
+              Try API
+              <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
+            </a>
+          </div>
+        </nav>
+
         <main className="relative z-10">
           <section className="bg-[#fafafa] py-[100px]">
             <div className="max-w-6xl mx-auto px-6">
@@ -1874,7 +2015,7 @@ function App() {
                         Pro
                       </h2>
                       <p className="mt-2 text-3xl font-bold text-white">
-                        $99 <span className="text-sm font-normal text-[#9ca3af]">/ month</span>
+                        $79 <span className="text-sm font-normal text-[#9ca3af]">/ month</span>
                       </p>
                       <p className="mt-1 text-[12px] text-[#9ca3af]">
                         After your first 2 free months.
@@ -1885,7 +2026,7 @@ function App() {
                     </span>
                   </div>
                   <p className="mt-3 text-sm text-[#d1d5db]">
-                    For serious quants and traders
+                    For serious developers and traders
                   </p>
                   <ul className="mt-5 text-[14px] text-[#e5e7eb]">
                     {[
@@ -1964,10 +2105,15 @@ function App() {
           </section>
         </main>
       </div>
+      </NavigateContext.Provider>
     );
   }
 
-  return <HomePage />;
+  return (
+    <NavigateContext.Provider value={navigate}>
+      <HomePage />
+    </NavigateContext.Provider>
+  );
 }
 
 export default App;
