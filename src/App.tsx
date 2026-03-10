@@ -56,6 +56,32 @@ const API_ENDPOINTS = [
   { method: "GET", path: "/v1/prediction", desc: "Kalshi + Polymarket feeds" },
 ] as const;
 
+function Logo({ className = "text-[#1a1a1a]" }: { className?: string }) {
+  const [slashVisible, setSlashVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSlashVisible((v) => !v);
+    }, 550);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <a href="/" className={`flex items-center gap-0 font-bold tracking-tight text-lg sm:text-xl no-underline ${className}`}>
+      <span>Money</span>
+      <span
+        className={`inline-block min-w-[0.5em] px-[0.2em] text-center transition-opacity duration-150 ${
+          slashVisible ? "opacity-100" : "opacity-0"
+        }`}
+        aria-hidden
+      >
+        \
+      </span>
+      <span>Line</span>
+    </a>
+  );
+}
+
 const HERO_SNIPPETS_BY_ENDPOINT = [
   `GET /v1/arbitrage?sport=nba
 
@@ -338,7 +364,6 @@ function highlightSnippetBody(body: string) {
 
 function HomePage() {
   const navigate = useContext(NavigateContext);
-  const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [copied, setCopied] = useState(false);
   const [heroEndpointIndex, setHeroEndpointIndex] = useState(0);
@@ -353,13 +378,6 @@ function HomePage() {
   const [glanceArbIndex, setGlanceArbIndex] = useState<0 | 1 | 2>(0);
   const statsSectionRef = useRef<HTMLElement>(null);
   const statsAnimatedRef = useRef(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSlashVisible((v) => !v);
-    }, 550);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -416,18 +434,7 @@ function HomePage() {
     <div className="relative min-h-screen bg-[#f5f2eb] text-[#1a1a1a]">
       {/* Navigation */}
       <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-        <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
-          <span>Money</span>
-          <span
-            className={`inline-block min-w-[0.5em] px-[0.2em] text-center transition-opacity duration-150 ${
-              slashVisible ? "opacity-100" : "opacity-0"
-            }`}
-            aria-hidden
-          >
-            \
-          </span>
-          <span>Line</span>
-        </a>
+        <Logo className="text-[#1a1a1a]" />
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
           <a href="/#api" className="hover:opacity-70 transition-opacity">
             API
@@ -1489,11 +1496,7 @@ function AuthPage() {
     <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a] flex flex-col">
       {/* Shared navigation from homepage */}
       <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-        <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
-          <span>Money</span>
-          <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
-          <span>Line</span>
-        </a>
+        <Logo className="text-[#1a1a1a]" />
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
           <a
             href="/#api"
@@ -1676,42 +1679,29 @@ function App() {
   if (pathname.startsWith("/docs")) {
     return (
       <NavigateContext.Provider value={navigate}>
-      <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a]">
-        {/* Shared light nav matching homepage */}
-        <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-          <a href="/" className="flex items-center gap-0 font-bold text-[#1a1a1a] tracking-tight text-lg sm:text-xl no-underline">
-            <span>Money</span>
-            <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
-            <span>Line</span>
-            <span className="ml-2 rounded-full border border-[#e5e7eb] bg-white px-2 py-[2px] text-[10px] font-mono uppercase tracking-[0.16em] text-[#4b5563]">
-              Docs
-            </span>
-          </a>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
-            <a href="/#api" className="hover:opacity-70 transition-opacity">
-              API
-            </a>
-            <a href="/docs" onClick={(e) => { e.preventDefault(); navigate("/docs"); }} className="hover:opacity-70 transition-opacity" aria-current="page">
-              Docs
-            </a>
-            <a href="/pricing" className="hover:opacity-70 transition-opacity">
-              Pricing
-            </a>
-            <a
-              href="/get-started"
-              onClick={(e) => { e.preventDefault(); navigate("/get-started"); }}
-              className="group inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-4 py-2 text-sm font-medium cursor-pointer border-2 border-transparent transition-all duration-200 ease-out hover:scale-[1.02] hover:bg-[#e8ff47]/25 hover:border-[#e8ff47]/70 hover:text-[#1a1a1a] no-underline"
-            >
-              Get API key
-              <span className="ml-1.5 inline-block transition-transform duration-200 ease-out group-hover:translate-x-[3px]" aria-hidden>→</span>
-            </a>
-          </div>
-        </nav>
+      <div className="min-h-screen bg-[#f5f2eb] text-[#1a1a1a] flex flex-col">
+        {/* Top bar: compact, not sticky */}
+        <header className="flex-shrink-0 border-b border-[#e5e7eb] bg-[#f5f2eb]/95">
+          <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+            <div className="flex items-center gap-2">
+              <Logo className="text-[#1a1a1a]" />
+              <span className="ml-1 rounded border border-[#e5e7eb] bg-white px-1.5 py-[2px] text-[10px] font-mono uppercase tracking-wider text-[#4b5563]">
+                Docs
+              </span>
+            </div>
+            <div className="flex items-center gap-6 text-sm font-medium text-[#1a1a1a]">
+              <a href="/#api" className="hover:opacity-70 transition-opacity no-underline">API</a>
+              <a href="/docs" onClick={(e) => { e.preventDefault(); navigate("/docs"); }} className="hover:opacity-70 transition-opacity no-underline" aria-current="page">Docs</a>
+              <a href="/pricing" onClick={(e) => { e.preventDefault(); navigate("/pricing"); }} className="hover:opacity-70 transition-opacity no-underline">Pricing</a>
+              <a href="/get-started" onClick={(e) => { e.preventDefault(); navigate("/get-started"); }} className="inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-3 py-1.5 text-sm font-medium no-underline hover:opacity-90">Get API key →</a>
+            </div>
+          </nav>
+        </header>
 
-        <main className="max-w-6xl mx-auto px-6 py-8 lg:py-12 md:h-[calc(100vh-88px)] md:overflow-hidden">
-          <div className="grid md:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start md:h-full">
-            {/* Sidebar nav */}
-            <aside className="space-y-6 md:sticky md:top-4 self-start md:pr-4 border-r border-[#e5e7eb]">
+        {/* Docs body: left sidebar column + scrollable content column */}
+        <main className="flex-1 flex min-h-0 w-full">
+          <aside className="w-[260px] flex-shrink-0 border-r border-[#e5e7eb] bg-[#fafaf9] overflow-y-auto py-6 pl-6 pr-4 hidden md:block">
+            <div className="space-y-6">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   Getting started
@@ -1763,10 +1753,12 @@ function App() {
                   </a>
                 </nav>
               </div>
+            </div>
             </aside>
 
-            {/* Main docs content */}
-            <section className="space-y-12 md:h-full md:overflow-y-auto pr-1 md:pl-2">
+            {/* Main docs content: only this column scrolls */}
+            <section className="flex-1 min-w-0 overflow-y-auto py-8 px-6 md:px-10 lg:px-12">
+              <div className="max-w-3xl space-y-12">
               {/* Intro */}
               <section id="introduction" className="space-y-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
@@ -2045,8 +2037,8 @@ Authorization: Bearer YOUR_API_KEY
                   </pre>
                 </div>
               </section>
+              </div>
             </section>
-          </div>
         </main>
       </div>
       </NavigateContext.Provider>
@@ -2058,11 +2050,7 @@ Authorization: Bearer YOUR_API_KEY
       <div className="min-h-screen bg-[#f5f2eb] text-[#111827]">
         {/* Navigation matching homepage */}
         <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
-          <a href="/" className="flex items-center gap-0 font-bold text-[#111827] tracking-tight text-lg sm:text-xl no-underline">
-            <span>Money</span>
-            <span className="inline-block min-w-[0.5em] px-[0.2em] text-center">\\</span>
-            <span>Line</span>
-          </a>
+          <Logo className="text-[#111827]" />
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#111827]">
             <a href="/#api" className="hover:opacity-70 transition-opacity">
               API
