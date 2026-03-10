@@ -308,6 +308,32 @@ console.log(odds[0].ev); // → +4.7`,
   --data-urlencode "markets=moneyline,ev"`,
 } as const;
 
+function highlightSnippetBody(body: string) {
+  const tokens = body.split(/(".*?"|\btrue\b|\bfalse\b|\bnull\b|\b\d+\.\d+\b|\b\d+\b)/g);
+  return tokens.map((token, idx) => {
+    if (!token) return null;
+    let className = "text-[#9ca3af]";
+
+    if (token.startsWith("//")) {
+      className = "text-[#6b7280]";
+    } else if (token.startsWith('"') && token.endsWith('"')) {
+      className = "text-[#fb923c]"; // strings / field names
+    } else if (/^\d+(\.\d+)?$/.test(token.trim())) {
+      className = "text-[#facc15]"; // numbers
+    } else if (/^(true|false|null)$/.test(token.trim())) {
+      className = "text-[#38bdf8]"; // booleans / null
+    } else if (token === "{" || token === "}" || token === "[" || token === "]") {
+      className = "text-[#6b7280]";
+    }
+
+    return (
+      <span key={idx} className={className}>
+        {token}
+      </span>
+    );
+  });
+}
+
 function HomePage() {
   const [slashVisible, setSlashVisible] = useState(true);
   const [cursorVisible, setCursorVisible] = useState(true);
@@ -321,6 +347,7 @@ function HomePage() {
   const [stat2, setStat2] = useState(0);
   const [stat3, setStat3] = useState(0);
   const [glanceEndpointIndex, setGlanceEndpointIndex] = useState(0);
+  const [glanceArbIndex, setGlanceArbIndex] = useState<0 | 1 | 2>(0);
   const statsSectionRef = useRef<HTMLElement>(null);
   const statsAnimatedRef = useRef(false);
 
@@ -492,7 +519,7 @@ function HomePage() {
                           {" "}
                           <span className="text-[#86efac]">{path}</span>
                           {"\n"}
-                          <span className="text-[#888]">{rest}</span>
+                          {highlightSnippetBody(rest)}
                           <span className={`inline-block w-2 align-bottom ${cursorVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-100`} style={{ color: "#86efac" }}>|</span>
                         </>
                       );
@@ -669,139 +696,307 @@ function HomePage() {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col">
-                <div className="rounded-xl border border-[#e8e8e4] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden flex-1 min-h-[280px]">
-                  <div className="px-4 py-2.5 border-b border-[#eee] bg-[#fafafa] text-[12px] font-medium text-[#555]">
-                    Example: Sports analytics app
+                <div className="rounded-xl border border-[#e8e8e4] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden flex-1 min-h-[380px] flex flex-col">
+                  <div className="px-4 py-2.5 border-b border-[#eee] bg-[#fafafa] text-[12px] font-medium text-[#555] flex items-center justify-between shrink-0">
+                    <span>Example: Sports analytics app</span>
+                    <span className="font-mono text-[10px] text-[#888] font-normal">Powered by full API response</span>
                   </div>
-                  <div className="p-4 text-[13px] text-[#333]">
+                  <div className="p-4 text-[13px] text-[#333] overflow-y-auto flex-1 min-h-0">
                     {glanceEndpointIndex === 0 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Live arb opportunities</div>
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: arbs_returned 3</span>
+                          <span>live_arbs 1 · pregame_arbs 2</span>
+                          <span>latency_ms 28</span>
+                          <span className="text-[#0d9488]">stale_warning false</span>
+                        </div>
                         <table className="w-full text-left border-collapse text-[11px]">
                           <thead>
                             <tr className="border-b border-[#e0e0e0]">
-                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Game</th>
-                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Legs</th>
-                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Profit %</th>
-                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">$100</th>
-                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Urgency</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Game · Market</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Legs (book · side · price)</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Stake %</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Profit</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Timing</th>
                             </tr>
                           </thead>
                           <tbody className="text-[#333]">
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">LAL @ BOS ML</td><td>DK home / FD away</td><td className="text-right text-[#0d9488] font-medium">2.14%</td><td className="text-right">$2.14</td><td><span className="text-[#ea580c]">high</span></td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">KC @ BUF ML</td><td>Pinnacle / BetMGM</td><td className="text-right text-[#0d9488] font-medium">1.82%</td><td className="text-right">$1.82</td><td><span className="text-[#ca8a04]">moderate</span></td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">NYY @ BOS total</td><td>FD over / Caesars under</td><td className="text-right text-[#0d9488] font-medium">1.41%</td><td className="text-right">$1.41</td><td><span className="text-[#16a34a]">stable</span></td></tr>
+                            <tr
+                              className={`border-b border-[#f0f0f0] cursor-pointer ${glanceArbIndex === 0 ? "bg-[#ecfdf5]" : "hover:bg-[#f5f5f5]"}`}
+                              onClick={() => setGlanceArbIndex(0)}
+                            >
+                              <td className="py-1.5">LAL @ BOS · ML</td>
+                              <td className="text-[10px]">DK home +112 · FD away −105</td>
+                              <td className="text-right">47.2 / 52.8</td>
+                              <td className="text-right text-[#0d9488] font-medium">9.0% · $9.00/100</td>
+                              <td><span className="text-[#ea580c]">high</span> · age 4s</td>
+                            </tr>
+                            <tr
+                              className={`border-b border-[#f0f0f0] cursor-pointer ${glanceArbIndex === 1 ? "bg-[#ecfdf5]" : "hover:bg-[#f5f5f5]"}`}
+                              onClick={() => setGlanceArbIndex(1)}
+                            >
+                              <td className="py-1.5">KC @ BUF · ML</td>
+                              <td className="text-[10px]">Pinnacle +108 · BetMGM −106</td>
+                              <td className="text-right">48.1 / 51.9</td>
+                              <td className="text-right text-[#0d9488] font-medium">8.3% · $8.30/100</td>
+                              <td><span className="text-[#ca8a04]">moderate</span> · est_life ~2m</td>
+                            </tr>
+                            <tr
+                              className={`border-b border-[#f0f0f0] cursor-pointer ${glanceArbIndex === 2 ? "bg-[#ecfdf5]" : "hover:bg-[#f5f5f5]"}`}
+                              onClick={() => setGlanceArbIndex(2)}
+                            >
+                              <td className="py-1.5">NYY @ BOS · Total</td>
+                              <td className="text-[10px]">FD over · Caesars under</td>
+                              <td className="text-right">—</td>
+                              <td className="text-right text-[#0d9488] font-medium">7.5% · $7.50/100</td>
+                              <td><span className="text-[#16a34a]">stable</span> · limits checked</td>
+                            </tr>
                           </tbody>
                         </table>
+                        <p className="text-[10px] text-[#666]">
+                          Click a row to preview an example bet. profit.total_payout_on_100 · legs[].stake_on_100, payout_on_100, age_seconds · timing.urgency, estimated_life_sec
+                        </p>
+                        {(() => {
+                          const opportunities = [
+                            {
+                              label: "LAL @ BOS · DK home +112 / FD away −105",
+                              profitPct: 9.0,
+                              profitPer100: 9.0,
+                              profitOn1000: 90,
+                              stakeSplit: "DK $472 · FD $528",
+                              urgency: "high (age 4s, est_life ~90s)",
+                            },
+                            {
+                              label: "KC @ BUF · Pinnacle +108 / BetMGM −106",
+                              profitPct: 8.3,
+                              profitPer100: 8.3,
+                              profitOn1000: 83,
+                              stakeSplit: "Pin $481 · MGM $519",
+                              urgency: "moderate (est_life ~2m)",
+                            },
+                            {
+                              label: "NYY @ BOS total · FD over / Caesars under",
+                              profitPct: 7.5,
+                              profitPer100: 7.5,
+                              profitOn1000: 75,
+                              stakeSplit: "FD $500 · Caesars $500",
+                              urgency: "stable (low_limit_warning false)",
+                            },
+                          ] as const;
+                          const selected = opportunities[glanceArbIndex] ?? opportunities[0];
+                          return (
+                            <div className="mt-3 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-3.5 py-3">
+                              <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <div className="text-[11px] font-semibold text-[#111]">
+                                  Example bet: <span className="font-mono">$1,000</span> across both legs
+                                </div>
+                                <div className="text-[10px] text-[#0d9488] font-medium">
+                                  Guaranteed profit:{" "}
+                                  <span className="font-mono">
+                                    ${selected.profitOn1000.toFixed(0)}
+                                  </span>{" "}
+                                  (<span className="font-mono">{selected.profitPct.toFixed(1)}%</span> ROI)
+                                </div>
+                              </div>
+                              <p className="mt-1.5 text-[11px] text-[#374151]">{selected.label}</p>
+                              <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#4b5563]">
+                                <div className="rounded-md bg-white border border-[#e5e7eb] px-2 py-1.5">
+                                  <div className="text-[10px] uppercase text-[#9ca3af] mb-0.5">Stake split</div>
+                                  <div>{selected.stakeSplit}</div>
+                                </div>
+                                <div className="rounded-md bg-white border border-[#e5e7eb] px-2 py-1.5">
+                                  <div className="text-[10px] uppercase text-[#9ca3af] mb-0.5">Per $100</div>
+                                  <div>
+                                    Profit{" "}
+                                    <span className="font-mono">
+                                      ${selected.profitPer100.toFixed(2)}
+                                    </span>{" "}
+                                    ({selected.profitPct.toFixed(1)}%)
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="mt-1.5 text-[10px] text-[#6b7280]">
+                                Timing: {selected.urgency}. Limits and regional availability from{" "}
+                                <code className="font-mono text-[10px]">limits.estimated_max</code> and{" "}
+                                <code className="font-mono text-[10px]">alerts</code>.
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     )}
                     {glanceEndpointIndex === 1 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">+EV opportunities (sharp_ref: Pinnacle)</div>
-                        <div className="space-y-2 text-[11px]">
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
-                            <span className="min-w-0">Celtics ML · DK +105</span>
-                            <span className="text-[#0d9488] font-medium shrink-0">+4.7%</span>
-                            <span className="text-[#666] shrink-0">½ Kelly 2.4% · Q78</span>
-                          </div>
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
-                            <span className="min-w-0">Chiefs -3.5 · FD -108</span>
-                            <span className="text-[#0d9488] font-medium shrink-0">+2.2%</span>
-                            <span className="text-[#666] shrink-0">½ Kelly 1.1% · Q62</span>
-                          </div>
-                          <div className="flex justify-between items-center py-2 border-b border-[#f0f0f0] gap-2">
-                            <span className="min-w-0">Yankees ML · BetMGM +100</span>
-                            <span className="text-[#b91c1c] font-medium shrink-0">−0.8%</span>
-                            <span className="text-[#666] shrink-0">CLV neg · Q38</span>
-                          </div>
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: sharp_ref pinnacle</span>
+                          <span>min_ev_filter 1.0 · opps_returned 5</span>
+                          <span>latency_ms 52</span>
                         </div>
+                        <div className="space-y-2 text-[11px]">
+                          {[
+                            { game: "Celtics ML", book: "DK +105", ev: "+4.7%", per100: "$4.70", kelly: "½ Kelly 2.4%", sharp: "Pinnacle −108", noVig: "0.5194", q: 78, dir: "unfavorable", mins: 8, sharpSide: true, clv: "positive" },
+                            { game: "Chiefs -3.5", book: "FD −108", ev: "+2.2%", per100: "$2.20", kelly: "½ Kelly 1.1%", sharp: "Pinnacle −110", noVig: "0.524", q: 62, dir: "stable", mins: 12, sharpSide: true, clv: "neutral" },
+                            { game: "Yankees ML", book: "BetMGM +100", ev: "−0.8%", per100: "—", kelly: "—", sharp: "—", noVig: "—", q: 38, dir: "unfavorable", mins: 2, sharpSide: false, clv: "negative" },
+                          ].map((row, i) => (
+                            <div key={i} className="border border-[#eee] rounded-lg p-2 space-y-1">
+                              <div className="flex justify-between items-start gap-2">
+                                <span className="font-medium">{row.game} · {row.book}</span>
+                                <span className={row.ev.startsWith("+") ? "text-[#0d9488] font-medium" : "text-[#b91c1c]"}>{row.ev} · {row.per100}</span>
+                              </div>
+                              <div className="text-[10px] text-[#666] flex flex-wrap gap-x-3 gap-y-0.5">
+                                <span>sharp_ref {row.sharp} (no_vig {row.noVig})</span>
+                                <span>quality_score {row.q}</span>
+                                <span>line_context: {row.dir} · {row.mins}m at current</span>
+                                <span>sharp_action_on_side {row.sharpSide ? "✓" : "✗"}</span>
+                                <span>clv_expected {row.clv}</span>
+                                <span>{row.kelly}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-[#666]">ev_pct, ev_per_100, kelly_fraction, half_kelly · line_context.direction, minutes_at_current · expires_approx</p>
                       </div>
                     )}
                     {glanceEndpointIndex === 2 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">LAL @ BOS — moneyline · spread · total</div>
-                        <table className="w-full text-left border-collapse text-[11px]">
-                          <thead>
-                            <tr className="border-b border-[#e0e0e0]">
-                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Book</th>
-                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">ML</th>
-                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">ev_vs_best</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Pinnacle (sharp)</td><td className="text-right">−106</td><td className="text-right text-[#0d9488]">+0.48%</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">DraftKings</td><td className="text-right">−108</td><td className="text-right text-[#0d9488]">+0.48%</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">FanDuel</td><td className="text-right">−112</td><td className="text-right text-[#b91c1c]">−0.32%</td></tr>
-                          </tbody>
-                        </table>
-                        <p className="text-[10px] text-[#666]">market_signals: sharp_action_detected ✓ · sharp_side: home · public_bet_pct_home 62%</p>
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: games_returned 8 · books_tracked 12</span>
+                          <span>latency_ms 84</span>
+                        </div>
+                        <div className="font-medium text-[#1a1a1a]">LAL 98 @ BOS 102 · Live</div>
+                        <div className="grid grid-cols-3 gap-2 text-[11px]">
+                          <div className="border border-[#eee] rounded p-2">
+                            <div className="text-[10px] uppercase text-[#777] mb-0.5">Moneyline (home)</div>
+                            <table className="w-full text-[10px]"><tbody>
+                              <tr><td>Pinnacle</td><td className="text-right">−106</td><td className="text-right text-[#0d9488]">ev_vs_best +0.48%</td></tr>
+                              <tr><td>DraftKings</td><td className="text-right">−108</td><td className="text-right text-[#0d9488]">+0.48%</td></tr>
+                              <tr><td>FanDuel</td><td className="text-right">−112</td><td className="text-right text-[#b91c1c]">−0.32%</td></tr>
+                            </tbody></table>
+                            <div className="mt-0.5 text-[10px] text-[#666]">best_book pinnacle · no_vig_prob 0.5146</div>
+                          </div>
+                          <div className="border border-[#eee] rounded p-2">
+                            <div className="text-[10px] uppercase text-[#777] mb-0.5">Spread</div>
+                            <div>home best_line −3.5 · best_price −108 · line_move −0.5</div>
+                            <div>away +3.5 · FD −110</div>
+                          </div>
+                          <div className="border border-[#eee] rounded p-2">
+                            <div className="text-[10px] uppercase text-[#777] mb-0.5">Total</div>
+                            <div>over/under 224.5 · line_move +1.5</div>
+                            <div>best_book draftkings</div>
+                          </div>
+                        </div>
+                        <div className="text-[10px] text-[#666] bg-[#f9fafb] rounded px-2 py-1">
+                          market_signals: sharp_action_detected ✓ · reverse_line_movement ✗ · sharp_side home · public_bet_pct_home 62% · public_money_pct_home 58%
+                        </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 3 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">LeBron James · vs BOS · injury: active</div>
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: props_returned 3 · games_covered 1 · players_covered 1</span>
+                          <span>latency_ms 67</span>
+                        </div>
+                        <div className="font-medium text-[#1a1a1a]">LeBron James (LAL) · vs BOS · injury_status active</div>
                         <table className="w-full text-left border-collapse text-[11px]">
                           <thead>
                             <tr className="border-b border-[#e0e0e0]">
                               <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Prop</th>
                               <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Line</th>
-                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">Over EV</th>
-                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Hit rate</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Books (over/under price)</th>
+                              <th className="pb-1.5 text-right text-[10px] uppercase text-[#777] font-medium">EV</th>
+                              <th className="pb-1.5 text-[10px] uppercase text-[#777] font-medium">Historical</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Points</td><td>24.5</td><td className="text-right text-[#0d9488]">+2.1%</td><td>62% (20g)</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Rebounds</td><td>7.5</td><td className="text-right text-[#666]">—</td><td>58%</td></tr>
-                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Assists</td><td>6.5</td><td className="text-right text-[#0d9488]">+1.2%</td><td>64%</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Points</td><td>24.5</td><td className="text-[10px]">DK −115/−105 · FD −112/−108</td><td className="text-right text-[#0d9488]">over +2.1%</td><td>avg 25.2 · hit 62% · line_vs_avg −0.7 · trend up</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Rebounds</td><td>7.5</td><td className="text-[10px]">DK · FD</td><td className="text-right">—</td><td>58% · 20g</td></tr>
+                            <tr className="border-b border-[#f0f0f0]"><td className="py-1.5">Assists</td><td>6.5</td><td className="text-[10px]">DK · FD</td><td className="text-right text-[#0d9488]">over +1.2%</td><td>64% · vs_opponent_avg 6.8</td></tr>
                           </tbody>
                         </table>
-                        <p className="text-[10px] text-[#666]">historical: avg 25.2 · line_vs_avg −0.7 · trend up · sharp_ref Pinnacle</p>
+                        <div className="text-[10px] text-[#666]">sharp_ref: Pinnacle no_vig_over/under, hold_pct · context: game_total 224.5, opp_rank_vs_position 14, projected_minutes 34</div>
                       </div>
                     )}
                     {glanceEndpointIndex === 4 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Live scores · game_state · scoring_events</div>
-                        <div className="rounded-lg bg-[#f5f5f5] p-3">
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: games_returned 4 · live_games 2 · final_games 1</span>
+                          <span>date 2026-03-09 · latency_ms 31 · include_odds true</span>
+                        </div>
+                        <div className="rounded-lg bg-[#f5f5f5] p-3 border border-[#eee]">
                           <div className="flex justify-between items-center">
                             <span className="font-medium">LAL</span>
                             <span className="text-xl font-bold tabular-nums">98</span>
-                            <span className="text-[#777] text-[11px]">Q4 2:34 · possession LAL</span>
+                            <span className="text-[#777] text-[11px]">Q4 · 2:34 · possession LAL</span>
                             <span className="text-xl font-bold tabular-nums">102</span>
                             <span className="font-medium">BOS</span>
                           </div>
-                          <p className="text-[10px] text-[#888] mt-1.5">LAL 24-26-22-26 · BOS 28-24-26-24 · TD Garden</p>
-                          <p className="text-[10px] text-[#666] mt-1">Last event: LeBron James 3-pointer → LAL 78, BOS 74 · live_odds attached</p>
+                          <div className="text-[10px] text-[#666] mt-1.5 grid grid-cols-2 gap-x-4 gap-y-0.5">
+                            <span>home_team: q1 28, q2 24, q3 26, q4 24 · record 38-22</span>
+                            <span>away_team: q1 24, q2 26, q3 22, q4 26 · record 42-18</span>
+                          </div>
+                          <div className="text-[10px] text-[#666] mt-1">game_state: period Q4 · clock_running true · venue TD Garden</div>
+                          <div className="mt-2 pt-2 border-t border-[#e5e5e5]">
+                            <div className="text-[10px] uppercase text-[#777] mb-0.5">scoring_events (last)</div>
+                            <div className="text-[10px]">8:42 Q3 · LeBron James 3-pointer · LAL 78, BOS 74</div>
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-[#e5e5e5] text-[10px]">
+                            live_odds: moneyline home −108 / away 105 · spread −3.5 · total 224.5 · best_book pinnacle
+                          </div>
                         </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 5 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Stream: line_move · steam_move · arb_alert</div>
-                        <div className="rounded-lg bg-[#f5f5f5] p-3 font-mono text-[10px] space-y-2">
-                          <div><span className="text-[#666]">line_move</span> LAL @ BOS · draftkings · moneyline home −108→−113 · ev_impact −0.8</div>
-                          <div><span className="text-[#666]">steam_move</span> nfl_kc_buf · spread · books_moved 4 · leading_book pinnacle · confidence high</div>
-                          <div><span className="text-[#666]">arb_alert</span> nba_den_phx ML · profit_pct 1.9 · urgency high · legs DK/FD</div>
+                        <div className="text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">WSS events: seq · type · ts_ms · (subscribe filters: sports, event_types, min_move_size)</div>
+                        <div className="space-y-2 font-mono text-[10px]">
+                          <div className="border border-[#eee] rounded p-2">
+                            <span className="text-[#9333ea] font-semibold">line_move</span>
+                            <span className="text-[#666]"> · seq 18472 · LAL @ BOS · draftkings · moneyline home</span>
+                            <div className="mt-0.5">prev_price −108 → new_price −113 · move_size 5 · direction home_favored</div>
+                            <div className="text-[#666]">market_context: sharp_consensus −106 · market_avg −109 · ev_impact −0.8</div>
+                          </div>
+                          <div className="border border-[#eee] rounded p-2">
+                            <span className="text-[#9333ea] font-semibold">steam_move</span>
+                            <span className="text-[#666]"> · nfl_kc_buf · spread · side home</span>
+                            <div className="mt-0.5">books_moved [pinnacle, dk, fd, betmgm] · window_seconds 12 · leading_book pinnacle · confidence high</div>
+                            <div>consensus_before −110 → consensus_after −115 · signal sharp_action</div>
+                          </div>
+                          <div className="border border-[#eee] rounded p-2">
+                            <span className="text-[#9333ea] font-semibold">arb_alert</span>
+                            <span className="text-[#666]"> · arb_id … · nba_den_phx · profit_pct 1.9 · urgency high</span>
+                            <div className="mt-0.5">legs: DK home +108 · FD away −107</div>
+                          </div>
                         </div>
                       </div>
                     )}
                     {glanceEndpointIndex === 6 && (
                       <div className="space-y-3">
-                        <div className="font-semibold text-[#1a1a1a]">Prediction markets · sportsbook_comparison</div>
-                        <div className="space-y-2 text-[11px]">
-                          <div>
-                            <p className="text-[#333] font-medium">Lakers win vs Celtics · Polymarket</p>
-                            <div className="h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden flex mt-0.5">
-                              <div className="h-full w-[45%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                        <div className="flex items-center justify-between gap-2 flex-wrap text-[10px] text-[#666] bg-[#f5f5f5] rounded-lg px-2.5 py-1.5">
+                          <span>meta: sources polymarket, kalshi · markets_returned 4 · linked_to_sb 2</span>
+                          <span>latency_ms 120</span>
+                        </div>
+                        <div className="border border-[#eee] rounded-lg p-2.5 space-y-2">
+                          <div className="font-medium text-[#1a1a1a]">Lakers win vs Celtics · Polymarket · linked_game_id nba_lal_bos_20260309</div>
+                          <div className="flex gap-4 text-[11px]">
+                            <div className="flex-1">
+                              <div className="text-[10px] uppercase text-[#777] mb-0.5">outcomes</div>
+                              <div>YES price 0.452 · prob 0.452 · bid 0.448 · ask 0.456 · spread 0.008</div>
+                              <div>NO price 0.548 · prob 0.548</div>
+                              <div className="mt-0.5">price_24h_ago 0.438 · price_change_24h +1.4</div>
                             </div>
-                            <p className="text-[10px] text-[#666] mt-0.5">YES 45.2% · sb_no_vig 48.5% · prob_delta −3.3 · cross_market_ev +7.4%</p>
-                          </div>
-                          <div>
-                            <p className="text-[#333] font-medium">Chiefs win Super Bowl · Kalshi</p>
-                            <div className="h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden flex mt-0.5">
-                              <div className="h-full w-[67%] bg-[#0d9488]" /><div className="h-full flex-1 bg-[#f0f0f0]" />
+                            <div className="flex-1">
+                              <div className="text-[10px] uppercase text-[#777] mb-0.5">volume</div>
+                              <div>volume_24h $12.5k · volume_total $89k · open_interest $42k</div>
                             </div>
-                            <p className="text-[10px] text-[#666] mt-0.5">volume_24h $12.5k · open_interest $42k</p>
                           </div>
+                          <div className="text-[10px] bg-[#ecfdf5] text-[#065f46] rounded px-2 py-1">
+                            sportsbook_comparison: sb_no_vig_prob 0.485 · prob_delta −0.033 · delta_direction sb_higher · cross_market_ev +7.4% · interpretation: &quot;Prediction market pricing Lakers cheaper — potential buy YES&quot;
+                          </div>
+                          <div className="text-[10px] text-[#666]">trend: direction_7d up · high_7d 0.47 · low_7d 0.41 · momentum stable · alerts [large_prob_delta_vs_sb]</div>
+                        </div>
+                        <div className="border border-[#eee] rounded-lg p-2 text-[11px]">
+                          <div className="font-medium">Chiefs win Super Bowl · Kalshi</div>
+                          <div>YES 67% · volume_24h $8.2k · open_interest $31k · resolution_rule, resolution_date in response</div>
                         </div>
                       </div>
                     )}
@@ -1072,19 +1267,8 @@ function HomePage() {
               Start building today. Scale when you're ready.
             </p>
 
-            {/* Hero offer */}
-            <div className="mt-8 flex justify-center">
-              <div className="inline-flex flex-col items-center text-center gap-2 rounded-full bg-[#e8ff47] px-8 py-4 shadow-sm">
-                <span className="text-xl sm:text-2xl font-extrabold text-[#111827]">
-                  2 months free.
-                </span>
-                <span className="text-xs sm:text-sm font-medium text-[#111827]">
-                  On any plan. No credit card required to start.
-                </span>
-              </div>
-            </div>
             <p className="mt-3 text-xs text-[#6b7280] text-center max-w-xl mx-auto">
-              Pick the plan that fits. Your first 2 months are on us on every paid tier — then billing starts automatically.
+              Pick the plan that fits. Your first 2 months on Pro are on us — then billing starts automatically.
             </p>
 
             {/* Tier cards */}
@@ -1137,7 +1321,7 @@ function HomePage() {
                       Pro
                     </h3>
                     <p className="mt-2 text-3xl font-bold text-white">
-                      $99 <span className="text-sm font-normal text-[#9ca3af]">/ month</span>
+                      $79 <span className="text-sm font-normal text-[#9ca3af]">/ month</span>
                     </p>
                     <p className="mt-1 text-[12px] text-[#9ca3af]">
                       After your first 2 free months.
@@ -1288,8 +1472,315 @@ function HomePage() {
   );
 }
 
+function AuthPage() {
+  const [mode, setMode] = useState<"signup" | "login">("signup");
+
+  const isSignup = mode === "signup";
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white flex flex-col">
+      <header className="border-b border-slate-800 bg-[#020617]/80 backdrop-blur">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+          <a href="/" className="flex items-center gap-1.5 font-bold text-white no-underline">
+            <span>Money</span>
+            <span className="inline-block min-w-[0.5em] text-center">\\</span>
+            <span>Line</span>
+          </a>
+          <div className="flex items-center gap-4 text-sm">
+            <button
+              type="button"
+              onClick={() => setMode("login")}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium border transition-colors ${
+                isSignup
+                  ? "border-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-900/60"
+                  : "border-slate-500 bg-slate-900/80 text-white"
+              }`}
+            >
+              Log in
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        <div className="max-w-5xl mx-auto px-6 py-10 lg:py-16 grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-5">
+            <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-300">
+              Get your API key
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+              You&apos;re one step away from getting your API key.
+            </h1>
+            <p className="text-sm sm:text-[15px] text-slate-300 max-w-md">
+              Create an account to start pulling normalized odds, props, EV and arbitrage signals, scores, and prediction
+              markets from 100+ sportsbooks. No credit card required to get started.
+            </p>
+            <ul className="mt-4 space-y-1.5 text-[13px] text-slate-300">
+              <li>• 1,000 free requests on the Starter tier</li>
+              <li>• Upgrade to Pro when you&apos;re ready — first 2 months free</li>
+              <li>• Designed for quants, traders, and product teams</li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 shadow-[0_18px_45px_rgba(0,0,0,0.65)] p-6 sm:p-7">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  {isSignup ? "Create your MoneyLine account" : "Log in"}
+                </h2>
+                <p className="text-[12px] text-slate-400 mt-0.5">
+                  {isSignup
+                    ? "We’ll generate an API key for you as soon as you finish signup."
+                    : "Use your existing credentials to access your dashboard and keys."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMode(isSignup ? "login" : "signup")}
+                className="hidden sm:inline-flex items-center rounded-full border border-slate-700 text-slate-200 px-3 py-1.5 text-[11px] font-medium hover:bg-slate-800/80 transition-colors"
+              >
+                {isSignup ? "Have an account? Log in" : "New here? Create account"}
+              </button>
+            </div>
+
+            <form className="space-y-4">
+              {isSignup && (
+                <div className="space-y-1.5">
+                  <label className="block text-[12px] font-medium text-slate-200">Full name</label>
+                  <input
+                    type="text"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                    placeholder="Ada Lovelace"
+                  />
+                </div>
+              )}
+              <div className="space-y-1.5">
+                <label className="block text-[12px] font-medium text-slate-200">Work email</label>
+                <input
+                  type="email"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                  placeholder="you@fund-or-company.com"
+                />
+              </div>
+              {isSignup && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="block text-[12px] font-medium text-slate-200">Organization</label>
+                    <input
+                      type="text"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                      placeholder="Acme Trading Fund"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[12px] font-medium text-slate-200">Role</label>
+                    <select className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent">
+                      <option>Quant / Researcher</option>
+                      <option>Engineer</option>
+                      <option>Trader</option>
+                      <option>Product / Founder</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+              <div className="space-y-1.5">
+                <label className="block text-[12px] font-medium text-slate-200">Password</label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-transparent"
+                  placeholder={isSignup ? "Create a strong password" : "Enter your password"}
+                />
+              </div>
+              {isSignup && (
+                <label className="mt-1.5 flex items-start gap-2 text-[11px] text-slate-400">
+                  <input type="checkbox" className="mt-[2px] h-3.5 w-3.5 rounded border-slate-600 bg-slate-950" />
+                  <span>
+                    I agree to the{" "}
+                    <a href="#" className="underline decoration-slate-500 hover:text-emerald-300">
+                      Terms
+                    </a>{" "}
+                    and{" "}
+                    <a href="#" className="underline decoration-slate-500 hover:text-emerald-300">
+                      Privacy Policy
+                    </a>
+                    .
+                  </span>
+                </label>
+              )}
+
+              <button
+                type="button"
+                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2.5 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
+              >
+                {isSignup ? "Create account & get API key →" : "Log in →"}
+              </button>
+            </form>
+
+            <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400">
+              <span>Secure by design · You can rotate or revoke keys anytime.</span>
+              <button
+                type="button"
+                onClick={() => setMode(isSignup ? "login" : "signup")}
+                className="sm:hidden underline decoration-slate-500 hover:text-emerald-300"
+              >
+                {isSignup ? "Log in" : "Create account"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 function App() {
   const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+  if (pathname.startsWith("/get-started")) {
+    return <AuthPage />;
+  }
+  if (pathname.startsWith("/docs")) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] text-white">
+        <header className="border-b border-white/10 bg-[#020617]/80 backdrop-blur">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+            <a href="/" className="flex items-center gap-1.5 font-bold text-white no-underline">
+              <span>Money</span>
+              <span className="inline-block min-w-[0.5em] text-center">\\</span>
+              <span>Line</span>
+              <span className="ml-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-[2px] text-[10px] font-mono uppercase tracking-[0.16em] text-emerald-200">
+                API Docs
+              </span>
+            </a>
+            <div className="hidden md:flex items-center gap-6 text-sm">
+              <a href="/#api" className="text-white/70 hover:text-white transition-colors no-underline">
+                API overview
+              </a>
+              <a href="/pricing" className="text-white/70 hover:text-white transition-colors no-underline">
+                Pricing
+              </a>
+              <a
+                href="/get-started"
+                className="inline-flex items-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
+              >
+                Get API key
+              </a>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-6xl mx-auto px-6 py-10 lg:py-14">
+          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10">
+            {/* Sidebar nav */}
+            <aside className="space-y-6">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                  Getting started
+                </p>
+                <nav className="space-y-1 text-[13px]">
+                  <a href="#introduction" className="block px-2 py-1.5 rounded-md bg-white/5 text-white no-underline">
+                    Introduction
+                  </a>
+                  <a href="#auth" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    Authentication
+                  </a>
+                  <a href="#errors" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    Errors & rate limits
+                  </a>
+                </nav>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                  REST endpoints
+                </p>
+                <nav className="space-y-1 text-[13px]">
+                  <a href="#odds" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/odds/{`{sport}`}
+                  </a>
+                  <a href="#ev" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/ev/{`{sport}`}
+                  </a>
+                  <a href="#arbitrage" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/arbitrage
+                  </a>
+                  <a href="#props" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/props/{`{sport}`}
+                  </a>
+                  <a href="#scores" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/scores/{`{sport}`}
+                  </a>
+                  <a href="#prediction" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    GET /v1/prediction
+                  </a>
+                </nav>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
+                  Streaming
+                </p>
+                <nav className="space-y-1 text-[13px]">
+                  <a href="#stream" className="block px-2 py-1.5 rounded-md text-slate-300 hover:bg-white/5 no-underline">
+                    WSS /v1/stream
+                  </a>
+                </nav>
+              </div>
+            </aside>
+
+            {/* Main docs content */}
+            <section className="space-y-12">
+              <section id="introduction" className="space-y-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                  MoneyLine API
+                </p>
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                  Build sports trading systems in minutes.
+                </h1>
+                <p className="text-sm sm:text-[15px] text-slate-300 max-w-2xl">
+                  MoneyLine normalizes odds, props, EV and arbitrage signals, scores, and prediction markets into a single schema
+                  across 100+ sportsbooks. This page covers the core REST endpoints and WebSocket stream you'll use to power
+                  dashboards, models, and production trading systems.
+                </p>
+                <div className="flex flex-wrap gap-3 pt-1">
+                  <a
+                    href="/get-started"
+                    className="inline-flex items-center rounded-full bg-emerald-400 text-[#022c22] px-4 py-2 text-sm font-semibold no-underline hover:bg-emerald-300 transition-colors"
+                  >
+                    Get API key
+                  </a>
+                  <a
+                    href="/"
+                    className="inline-flex items-center rounded-full border border-slate-700 text-slate-100 px-4 py-2 text-sm font-medium no-underline hover:bg-white/5 transition-colors"
+                  >
+                    Back to marketing site
+                  </a>
+                </div>
+              </section>
+
+              <section id="auth" className="space-y-3">
+                <h2 className="text-xl font-semibold text-white">Authentication</h2>
+                <p className="text-sm text-slate-300">
+                  All requests are authenticated with a **Bearer** API key. You can create and manage keys in your MoneyLine
+                  dashboard. Keys are scoped to your account and environment.
+                </p>
+                <pre className="mt-2 rounded-lg bg-black/60 border border-slate-800 p-4 text-[12px] font-mono text-slate-100 overflow-x-auto">
+{`curl https://api.moneyline.io/v1/odds \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -G --data-urlencode "sport=nba"`}
+                </pre>
+                <p className="text-[12px] text-slate-400">
+                  Send your key in the <code className="font-mono text-[11px]">Authorization</code> header. Do not send keys in query strings
+                  or client-side code that ships to browsers.
+                </p>
+              </section>
+
+              {/* Endpoint sections would continue here – odds, ev, arbitrage, props, scores, stream, prediction – each with
+                  query parameters and a shortened version of the robust example responses already on the homepage. */}
+            </section>
+          </div>
+        </main>
+      </div>
+    );
+  }
   if (pathname.startsWith("/pricing")) {
     // Reuse the pricing teaser section as the main content for now.
     return (
@@ -1304,18 +1795,8 @@ function App() {
                 Start building today. Scale when you're ready.
               </p>
 
-              <div className="mt-8 flex justify-center">
-                <div className="inline-flex flex-col items-center text-center gap-2 rounded-full bg-[#e8ff47] px-8 py-4 shadow-sm">
-                  <span className="text-xl sm:text-2xl font-extrabold text-[#111827]">
-                    2 months free.
-                  </span>
-                  <span className="text-xs sm:text-sm font-medium text-[#111827]">
-                    On any plan. No credit card required to start.
-                  </span>
-                </div>
-              </div>
               <p className="mt-3 text-xs text-[#6b7280] text-center max-w-xl mx-auto">
-                Pick the plan that fits. Your first 2 months are on us on every paid tier — then billing starts automatically.
+                Pick the plan that fits. Your first 2 months on Pro are on us — then billing starts automatically.
               </p>
 
               {/* Tier cards reused from homepage */}
