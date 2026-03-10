@@ -495,29 +495,35 @@ function HomePage() {
               <p className="mt-0 text-[15px] sm:text-base lg:text-lg text-[#4a4a4a] leading-relaxed lg:pb-1 break-words">
                 MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for founders, developers, and traders building sports analytics and betting products.
               </p>
-              {/* Endpoint selector: vertical stack on mobile, horizontal scroll from sm */}
-              <div className="mt-5 sm:mt-6">
-                <div className="flex flex-col sm:flex-row sm:overflow-x-auto sm:pb-2 sm:gap-3 sm:min-w-max gap-2">
+              {/* Endpoint selector: always horizontal scroll so code block stays in view */}
+              <p className="mt-5 sm:mt-6 text-[11px] font-medium text-[#6b7280] uppercase tracking-wider">
+                Select endpoint — response shown below
+              </p>
+              <div className="mt-2 overflow-x-auto pb-2 -mx-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
+                <div className="flex gap-3 min-w-max pr-2">
                   {API_ENDPOINTS.map((ep, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setHeroEndpointIndex(i)}
-                      className={`w-full sm:w-[160px] sm:flex-shrink-0 rounded-lg border px-3 py-3 sm:py-2 text-left transition-colors cursor-pointer ${
+                      className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 py-2.5 text-left transition-colors cursor-pointer ${
                         heroEndpointIndex === i
-                          ? "border-[#1a1a1a] bg-[#1a1a1a] text-white"
+                          ? "border-[#1a1a1a] bg-[#1a1a1a] text-white ring-2 ring-[#1a1a1a] ring-offset-2 ring-offset-[#f5f2eb]"
                           : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
                       }`}
                     >
                       <span className={`block font-mono text-[10px] font-bold uppercase ${heroEndpointIndex === i ? "text-[#86efac]" : "text-[#666]"}`}>{ep.method}</span>
                       <span className="block font-mono text-[11px] mt-0.5 truncate">{ep.path}</span>
-                      <span className="block text-[10px] text-[#888] mt-1 sm:max-w-[140px]">{ep.desc}</span>
+                      <span className="block text-[10px] text-[#888] mt-1 line-clamp-2">{ep.desc}</span>
                     </button>
                   ))}
                 </div>
               </div>
-              {/* API code snippet */}
-              <div className="mt-3 relative rounded-xl bg-[#0f0f0f] border border-[#222] shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
+              {/* API code snippet — matches selected endpoint above */}
+              <p className="mt-4 text-[12px] text-[#6b7280] font-medium">
+                Example: <span className="font-mono text-[#1a1a1a]">{API_ENDPOINTS[heroEndpointIndex].method} {API_ENDPOINTS[heroEndpointIndex].path}</span>
+              </p>
+              <div className="mt-1.5 relative rounded-xl bg-[#0f0f0f] border border-[#222] shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden">
                 <button
                   type="button"
                   onClick={copySnippet}
