@@ -499,8 +499,8 @@ function HomePage() {
               <p className="mt-5 sm:mt-6 text-[11px] font-medium text-[#6b7280] uppercase tracking-wider">
                 Select endpoint — response shown below
               </p>
-              <div className="mt-2 pt-2 overflow-x-auto pb-2 -mx-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
-                <div className="flex gap-3 min-w-max pr-2 items-stretch">
+              <div className="mt-2 pt-2 pl-2 overflow-x-auto pb-2 pr-2 -mx-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
+                <div className="flex gap-3 min-w-max items-stretch">
                   {API_ENDPOINTS.map((ep, i) => (
                     <button
                       key={i}
