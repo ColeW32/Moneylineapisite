@@ -499,8 +499,8 @@ function HomePage() {
               <p className="mt-5 sm:mt-6 text-[11px] font-medium text-[#6b7280] uppercase tracking-wider">
                 Select endpoint — response shown below
               </p>
-              <div className="mt-2 pt-2 pl-2 overflow-x-auto pb-2 pr-2 -mx-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
-                <div className="flex gap-3 min-w-max items-stretch">
+              <div className="mt-2 pt-2 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
+                <div className="flex gap-3 min-w-max items-stretch pl-4 pr-4 sm:pl-6 sm:pr-6">
                   {API_ENDPOINTS.map((ep, i) => (
                     <button
                       key={i}
@@ -508,7 +508,7 @@ function HomePage() {
                       onClick={() => setHeroEndpointIndex(i)}
                       className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 pt-3 pb-2.5 text-left transition-colors cursor-pointer ${
                         heroEndpointIndex === i
-                          ? "border-[#1a1a1a] bg-[#1a1a1a] text-white ring-2 ring-[#1a1a1a] ring-offset-2 ring-offset-[#f5f2eb]"
+                          ? "border-[#1a1a1a] bg-[#1a1a1a] text-white shadow-[0_0_0_2px_#f5f2eb,0_0_0_4px_#1a1a1a]"
                           : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
                       }`}
                     >
