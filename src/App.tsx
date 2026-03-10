@@ -448,7 +448,7 @@ function HomePage() {
           <button
             type="button"
             onClick={() => setMobileNavOpen((o) => !o)}
-            className="md:hidden p-2 rounded-lg text-[#1a1a1a] hover:bg-[#1a1a1a]/10 transition-colors"
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[#1a1a1a] bg-[#1a1a1a]/8 hover:bg-[#1a1a1a]/15 active:bg-[#1a1a1a]/20 transition-colors"
             aria-expanded={mobileNavOpen}
             aria-label="Toggle menu"
           >
@@ -460,48 +460,50 @@ function HomePage() {
           </button>
         </nav>
         {mobileNavOpen && (
-          <div className="md:hidden border-t border-[#e5e7eb] bg-[#f5f2eb] px-4 py-3 flex flex-col gap-1">
-            <a href="/#api" onClick={() => setMobileNavOpen(false)} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">API</a>
-            <a href="/docs" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/docs"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Docs</a>
-            <a href="/pricing" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/pricing"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Pricing</a>
-            <a href="/get-started" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/get-started"); }} className="mt-2 inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white py-2.5 text-sm font-medium no-underline">Try API →</a>
+          <div className="md:hidden border-t border-[#e5e7eb] bg-[#ebe8e0] shadow-inner">
+            <div className="px-4 py-3 flex flex-col gap-0.5">
+              <a href="/#api" onClick={() => setMobileNavOpen(false)} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">API</a>
+              <a href="/docs" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/docs"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Docs</a>
+              <a href="/pricing" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/pricing"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Pricing</a>
+              <a href="/get-started" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/get-started"); }} className="mt-3 min-h-[48px] flex items-center justify-center rounded-full bg-[#1a1a1a] text-white text-[15px] font-semibold no-underline active:opacity-90">Try API →</a>
+            </div>
           </div>
         )}
       </header>
 
       <main className="relative z-10">
-        {/* Hero: headline top-aligned with right column subtext */}
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-4 pb-12 lg:pb-16">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+        {/* Hero: headline + CTA then subtext + endpoints */}
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-4 pb-10 sm:pb-12 lg:pb-16">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-start">
             <div className="min-w-0">
-              <h1 className="mt-0 pt-0 text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.15] -mt-2 break-words">
+              <h1 className="mt-0 pt-0 text-2xl min-[480px]:text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.2] -mt-2 break-words">
                 Sports betting data that puts <span className="underline decoration-2 underline-offset-2">edges</span> at the frontier.
               </h1>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline">
+              <div className="mt-5 sm:mt-6 flex flex-col min-[480px]:flex-row gap-3 sm:items-center">
+                <a href="/get-started" className="inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white px-5 py-3 sm:py-2.5 text-sm font-medium hover:opacity-90 transition-opacity no-underline min-h-[44px] sm:min-h-0">
                   Get API Key
                 </a>
-                <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline">
+                <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="inline-flex items-center justify-center rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] bg-transparent px-5 py-3 sm:py-2.5 text-sm font-medium hover:bg-[#1a1a1a]/5 transition-colors no-underline min-h-[44px] sm:min-h-0">
                   Explore Docs
                 </a>
               </div>
-              <p className="mt-4 text-xs text-[#4a4a4a]/90 break-words">
+              <p className="mt-4 text-xs sm:text-xs text-[#4a4a4a]/90 break-words">
                 Trusted by DFS operators, sportsbooks, sports analytics platforms, and trading teams.
               </p>
             </div>
-            <div className="pt-1 min-w-0">
-              <p className="mt-0 text-base sm:text-lg text-[#4a4a4a] leading-relaxed lg:pb-1 break-words">
+            <div className="pt-0 sm:pt-1 min-w-0">
+              <p className="mt-0 text-[15px] sm:text-base lg:text-lg text-[#4a4a4a] leading-relaxed lg:pb-1 break-words">
                 MoneyLine Sports data delivers normalized odds, props, EV and arbitrage signals, and prediction market feeds in one API—for founders, developers, and traders building sports analytics and betting products.
               </p>
-              {/* Endpoint selector: horizontal scroll on mobile with snap */}
-              <div className="mt-6 overflow-x-auto pb-2 -mx-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
-                <div className="flex gap-3 min-w-max pr-4 sm:pr-0">
+              {/* Endpoint selector: vertical stack on mobile, horizontal scroll from sm */}
+              <div className="mt-5 sm:mt-6">
+                <div className="flex flex-col sm:flex-row sm:overflow-x-auto sm:pb-2 sm:gap-3 sm:min-w-max gap-2">
                   {API_ENDPOINTS.map((ep, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setHeroEndpointIndex(i)}
-                      className={`flex-shrink-0 w-[160px] sm:w-auto snap-start rounded-lg border px-3 py-2 text-left transition-colors cursor-pointer ${
+                      className={`w-full sm:w-[160px] sm:flex-shrink-0 rounded-lg border px-3 py-3 sm:py-2 text-left transition-colors cursor-pointer ${
                         heroEndpointIndex === i
                           ? "border-[#1a1a1a] bg-[#1a1a1a] text-white"
                           : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
@@ -509,7 +511,7 @@ function HomePage() {
                     >
                       <span className={`block font-mono text-[10px] font-bold uppercase ${heroEndpointIndex === i ? "text-[#86efac]" : "text-[#666]"}`}>{ep.method}</span>
                       <span className="block font-mono text-[11px] mt-0.5 truncate">{ep.path}</span>
-                      <span className="block text-[10px] text-[#888] mt-1 line-clamp-2">{ep.desc}</span>
+                      <span className="block text-[10px] text-[#888] mt-1 sm:max-w-[140px]">{ep.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -519,7 +521,7 @@ function HomePage() {
                 <button
                   type="button"
                   onClick={copySnippet}
-                  className="absolute top-3 right-3 p-1.5 rounded-md text-[#555] hover:text-[#888] hover:bg-white/5 transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 sm:top-3 sm:right-3 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center p-2 sm:p-1.5 rounded-lg text-[#555] hover:text-[#888] hover:bg-white/5 active:bg-white/10 transition-colors cursor-pointer"
                   aria-label="Copy code"
                 >
                   {copied ? (
@@ -530,7 +532,7 @@ function HomePage() {
                     </svg>
                   )}
                 </button>
-                <pre className="p-4 pr-12 pt-10 text-[12px] leading-relaxed font-mono overflow-x-auto max-h-[320px] overflow-y-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
+                <pre className="p-3 sm:p-4 pr-14 sm:pr-12 pt-12 sm:pt-10 text-[11px] sm:text-[12px] leading-relaxed font-mono overflow-x-auto max-h-[280px] sm:max-h-[320px] overflow-y-auto" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" }}>
                   <code className="text-[#bbb] whitespace-pre-wrap break-words block">
                     {(() => {
                       const raw = HERO_SNIPPETS_BY_ENDPOINT[heroEndpointIndex];
@@ -585,7 +587,7 @@ function HomePage() {
             <p className="text-xs font-medium tracking-widest uppercase text-white/70 mb-6">
               Featured
             </p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] max-w-3xl">
+            <h2 className="text-2xl min-[480px]:text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight leading-[1.15] max-w-3xl">
               One API. Every book. Every edge.
             </h2>
             <p className="mt-6 text-lg text-white/80 max-w-xl">
@@ -655,7 +657,7 @@ function HomePage() {
         {/* Second off-white section with big text + stat counters */}
         <section ref={statsSectionRef} className="bg-[#f5f4f0]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-[60px]">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.1] max-w-3xl">
+            <h2 className="text-2xl min-[480px]:text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-[1.15] max-w-3xl">
               Built for the way you work.
             </h2>
             <p className="mt-6 text-lg text-[#4a4a4a] max-w-xl">
@@ -714,8 +716,8 @@ function HomePage() {
                     >
                       {ep.method}
                     </span>
-                    <span className="ml-3 font-mono text-[13px] text-[#ccc] truncate">{ep.path}</span>
-                    <span className={`ml-auto text-[13px] shrink-0 transition-colors ${glanceEndpointIndex === i ? "text-[#86efac]" : "text-[#555] group-hover:text-[#888]"}`}>{ep.desc}</span>
+                    <span className="ml-3 font-mono text-[12px] sm:text-[13px] text-[#ccc] truncate flex-1 min-w-0">{ep.path}</span>
+                    <span className={`hidden sm:inline ml-auto text-[13px] shrink-0 transition-colors ${glanceEndpointIndex === i ? "text-[#86efac]" : "text-[#555] group-hover:text-[#888]"}`}>{ep.desc}</span>
                   </button>
                 ))}
                 <div className="mt-2 px-5 pb-1 text-right">
@@ -723,10 +725,10 @@ function HomePage() {
                 </div>
               </div>
               <div className="w-full lg:w-1/2 flex flex-col">
-                <div className="rounded-xl border border-[#e8e8e4] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden flex-1 min-h-[380px] flex flex-col">
-                  <div className="px-4 py-2.5 border-b border-[#eee] bg-[#fafafa] text-[12px] font-medium text-[#555] flex items-center justify-between shrink-0">
+                <div className="rounded-xl border border-[#e8e8e4] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] overflow-hidden flex-1 min-h-[260px] sm:min-h-[320px] lg:min-h-[380px] flex flex-col">
+                  <div className="px-3 sm:px-4 py-2.5 border-b border-[#eee] bg-[#fafafa] text-[11px] sm:text-[12px] font-medium text-[#555] flex flex-col min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between gap-1 shrink-0">
                     <span>Example: Sports analytics app</span>
-                    <span className="font-mono text-[10px] text-[#888] font-normal">Powered by full API response</span>
+                    <span className="font-mono text-[10px] text-[#888] font-normal hidden sm:inline">Powered by full API response</span>
                   </div>
                   <div className="p-4 text-[13px] text-[#333] overflow-y-auto flex-1 min-h-0">
                     {glanceEndpointIndex === 0 && (
@@ -1040,7 +1042,7 @@ function HomePage() {
             <p className="text-xs font-medium tracking-widest uppercase text-white/70 mb-6">
               Coverage
             </p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] max-w-3xl">
+            <h2 className="text-2xl min-[480px]:text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight leading-[1.15] max-w-3xl">
               Props, futures, and live. Every sport.
             </h2>
             <div className="mt-10 grid sm:grid-cols-3 gap-6">
@@ -1519,16 +1521,18 @@ function AuthPage() {
               Get API key <span className="ml-1.5" aria-hidden>→</span>
             </a>
           </div>
-          <button type="button" onClick={() => setMobileNavOpen((o) => !o)} className="md:hidden p-2 rounded-lg text-[#1a1a1a] hover:bg-[#1a1a1a]/10" aria-expanded={mobileNavOpen} aria-label="Toggle menu">
+          <button type="button" onClick={() => setMobileNavOpen((o) => !o)} className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[#1a1a1a] bg-[#1a1a1a]/8 hover:bg-[#1a1a1a]/15" aria-expanded={mobileNavOpen} aria-label="Toggle menu">
             {mobileNavOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>}
           </button>
         </nav>
         {mobileNavOpen && (
-          <div className="md:hidden border-t border-[#e5e7eb] bg-[#f5f2eb] px-4 py-3 flex flex-col gap-1">
-            <a href="/#api" onClick={() => setMobileNavOpen(false)} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">API</a>
-            <a href="/docs" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/docs"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Docs</a>
-            <a href="/pricing" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/pricing"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Pricing</a>
-            <a href="/get-started" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/get-started"); }} className="mt-2 inline-flex items-center justify-center rounded-full bg-[#1a1a1a] text-white py-2.5 text-sm font-medium no-underline">Get API key →</a>
+          <div className="md:hidden border-t border-[#e5e7eb] bg-[#ebe8e0] shadow-inner">
+            <div className="px-4 py-3 flex flex-col gap-0.5">
+              <a href="/#api" onClick={() => setMobileNavOpen(false)} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">API</a>
+              <a href="/docs" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/docs"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Docs</a>
+              <a href="/pricing" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/pricing"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Pricing</a>
+              <a href="/get-started" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); navigate?.("/get-started"); }} className="mt-3 min-h-[48px] flex items-center justify-center rounded-full bg-[#1a1a1a] text-white text-[15px] font-semibold no-underline">Get API key →</a>
+            </div>
           </div>
         )}
       </header>
@@ -1689,16 +1693,18 @@ function App() {
               <a href="/pricing" onClick={(e) => { e.preventDefault(); navigate("/pricing"); }} className="hover:opacity-70 transition-opacity no-underline">Pricing</a>
               <a href="/get-started" onClick={(e) => { e.preventDefault(); navigate("/get-started"); }} className="inline-flex items-center rounded-full bg-[#1a1a1a] text-white px-3 py-1.5 text-sm font-medium no-underline hover:opacity-90">Get API key →</a>
             </div>
-            <button type="button" onClick={() => setDocsMobileNavOpen((o) => !o)} className="md:hidden p-2 rounded-lg text-[#1a1a1a] hover:bg-[#1a1a1a]/10" aria-expanded={docsMobileNavOpen} aria-label="Toggle menu">
+            <button type="button" onClick={() => setDocsMobileNavOpen((o) => !o)} className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[#1a1a1a] bg-[#1a1a1a]/8 hover:bg-[#1a1a1a]/15" aria-expanded={docsMobileNavOpen} aria-label="Toggle menu">
               {docsMobileNavOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>}
             </button>
           </nav>
           {docsMobileNavOpen && (
-            <div className="md:hidden border-t border-[#e5e7eb] bg-[#f5f2eb] px-4 py-3 flex flex-col gap-1">
-              <a href="/#api" onClick={() => setDocsMobileNavOpen(false)} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">API</a>
-              <a href="/docs" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/docs"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Docs</a>
-              <a href="/pricing" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/pricing"); }} className="py-2.5 text-sm font-medium text-[#1a1a1a] no-underline">Pricing</a>
-              <a href="/get-started" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/get-started"); }} className="mt-2 inline-flex justify-center rounded-full bg-[#1a1a1a] text-white py-2.5 text-sm font-medium no-underline">Get API key →</a>
+            <div className="md:hidden border-t border-[#e5e7eb] bg-[#ebe8e0] shadow-inner">
+              <div className="px-4 py-3 flex flex-col gap-0.5">
+                <a href="/#api" onClick={() => setDocsMobileNavOpen(false)} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">API</a>
+                <a href="/docs" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/docs"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Docs</a>
+                <a href="/pricing" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/pricing"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#1a1a1a] no-underline rounded-lg px-3 active:bg-[#1a1a1a]/10">Pricing</a>
+                <a href="/get-started" onClick={(e) => { e.preventDefault(); setDocsMobileNavOpen(false); navigate("/get-started"); }} className="mt-3 min-h-[48px] flex items-center justify-center rounded-full bg-[#1a1a1a] text-white text-[15px] font-semibold no-underline">Get API key →</a>
+              </div>
             </div>
           )}
         </header>
@@ -2064,16 +2070,18 @@ Authorization: Bearer YOUR_API_KEY
                 Try API <span className="ml-1.5" aria-hidden>→</span>
               </a>
             </div>
-            <button type="button" onClick={() => setPricingMobileNavOpen((o) => !o)} className="md:hidden p-2 rounded-lg text-[#111827] hover:bg-[#111827]/10" aria-expanded={pricingMobileNavOpen} aria-label="Toggle menu">
+            <button type="button" onClick={() => setPricingMobileNavOpen((o) => !o)} className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[#111827] bg-[#111827]/10 hover:bg-[#111827]/15" aria-expanded={pricingMobileNavOpen} aria-label="Toggle menu">
               {pricingMobileNavOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>}
             </button>
           </nav>
           {pricingMobileNavOpen && (
-            <div className="md:hidden border-t border-[#e5e7eb] bg-[#f5f2eb] px-4 py-3 flex flex-col gap-1">
-              <a href="/#api" onClick={() => setPricingMobileNavOpen(false)} className="py-2.5 text-sm font-medium text-[#111827] no-underline">API</a>
-              <a href="/docs" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/docs"); }} className="py-2.5 text-sm font-medium text-[#111827] no-underline">Docs</a>
-              <a href="/pricing" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/pricing"); }} className="py-2.5 text-sm font-medium text-[#111827] no-underline">Pricing</a>
-              <a href="/get-started" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/get-started"); }} className="mt-2 inline-flex justify-center rounded-full bg-[#111827] text-white py-2.5 text-sm font-medium no-underline">Try API →</a>
+            <div className="md:hidden border-t border-[#e5e7eb] bg-[#ebe8e0] shadow-inner">
+              <div className="px-4 py-3 flex flex-col gap-0.5">
+                <a href="/#api" onClick={() => setPricingMobileNavOpen(false)} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#111827] no-underline rounded-lg px-3 active:bg-[#111827]/10">API</a>
+                <a href="/docs" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/docs"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#111827] no-underline rounded-lg px-3 active:bg-[#111827]/10">Docs</a>
+                <a href="/pricing" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/pricing"); }} className="min-h-[44px] flex items-center text-[15px] font-medium text-[#111827] no-underline rounded-lg px-3 active:bg-[#111827]/10">Pricing</a>
+                <a href="/get-started" onClick={(e) => { e.preventDefault(); setPricingMobileNavOpen(false); navigate("/get-started"); }} className="mt-3 min-h-[48px] flex items-center justify-center rounded-full bg-[#111827] text-white text-[15px] font-semibold no-underline">Try API →</a>
+              </div>
             </div>
           )}
         </header>
