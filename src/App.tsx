@@ -1495,13 +1495,34 @@ function AuthPage() {
           <span>Line</span>
         </a>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1a1a1a]">
-          <a href="/#api" className="hover:opacity-70 transition-opacity">
+          <a
+            href="/#api"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate?.("/#api");
+            }}
+            className="hover:opacity-70 transition-opacity"
+          >
             API
           </a>
-          <a href="/docs" onClick={(e) => { e.preventDefault(); navigate?.("/docs"); }} className="hover:opacity-70 transition-opacity">
+          <a
+            href="/docs"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate?.("/docs");
+            }}
+            className="hover:opacity-70 transition-opacity"
+          >
             Docs
           </a>
-          <a href="/pricing" className="hover:opacity-70 transition-opacity">
+          <a
+            href="/pricing"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate?.("/pricing");
+            }}
+            className="hover:opacity-70 transition-opacity"
+          >
             Pricing
           </a>
           <a
@@ -1687,10 +1708,10 @@ function App() {
           </div>
         </nav>
 
-        <main className="max-w-6xl mx-auto px-6 py-10 lg:py-14 lg:h-[calc(100vh-88px)] lg:overflow-hidden">
-          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start lg:h-full">
+        <main className="max-w-6xl mx-auto px-6 py-8 lg:py-12 md:h-[calc(100vh-88px)] md:overflow-hidden">
+          <div className="grid md:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start md:h-full">
             {/* Sidebar nav */}
-            <aside className="space-y-6 lg:sticky lg:top-4 self-start">
+            <aside className="space-y-6 md:sticky md:top-4 self-start md:pr-4 border-r border-[#e5e7eb]">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   Getting started
@@ -1745,7 +1766,7 @@ function App() {
             </aside>
 
             {/* Main docs content */}
-            <section className="space-y-12 lg:h-full lg:overflow-y-auto pr-1 lg:pr-4">
+            <section className="space-y-12 md:h-full md:overflow-y-auto pr-1 md:pl-2">
               {/* Intro */}
               <section id="introduction" className="space-y-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
