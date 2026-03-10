@@ -1635,7 +1635,30 @@ function AuthPage() {
 }
 
 function App() {
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+  const [pathname, setPathname] = useState(() =>
+    typeof window !== "undefined" ? window.location.pathname : "/"
+  );
+
+  useEffect(() => {
+    const onPopState = () => setPathname(window.location.pathname);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest("a");
+      const href = a?.getAttribute("href");
+      if (!a || a.target === "_blank" || !href) return;
+      if (!href.startsWith("/") || href.startsWith("//")) return;
+      e.preventDefault();
+      window.history.pushState({}, "", href);
+      setPathname(new URL(href, window.location.origin).pathname);
+    };
+    document.addEventListener("click", handleClick, true);
+    return () => document.removeEventListener("click", handleClick, true);
+  }, []);
+
   if (pathname.startsWith("/get-started")) {
     return <AuthPage />;
   }
