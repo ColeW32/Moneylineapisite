@@ -499,20 +499,20 @@ function HomePage() {
               <p className="mt-5 sm:mt-6 text-[11px] font-medium text-[#6b7280] uppercase tracking-wider">
                 Select endpoint — response shown below
               </p>
-              <div className="mt-2 overflow-x-auto pb-2 -mx-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
-                <div className="flex gap-3 min-w-max pr-2">
+              <div className="mt-2 pt-2 overflow-x-auto pb-2 -mx-1 px-1 scroll-smooth snap-x snap-mandatory [scrollbar-width:thin]">
+                <div className="flex gap-3 min-w-max pr-2 items-stretch">
                   {API_ENDPOINTS.map((ep, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setHeroEndpointIndex(i)}
-                      className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 py-2.5 text-left transition-colors cursor-pointer ${
+                      className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 pt-3 pb-2.5 text-left transition-colors cursor-pointer ${
                         heroEndpointIndex === i
                           ? "border-[#1a1a1a] bg-[#1a1a1a] text-white ring-2 ring-[#1a1a1a] ring-offset-2 ring-offset-[#f5f2eb]"
                           : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
                       }`}
                     >
-                      <span className={`block font-mono text-[10px] font-bold uppercase ${heroEndpointIndex === i ? "text-[#86efac]" : "text-[#666]"}`}>{ep.method}</span>
+                      <span className={`block font-mono text-[10px] font-bold uppercase leading-tight ${heroEndpointIndex === i ? "text-[#86efac]" : "text-[#666]"}`}>{ep.method}</span>
                       <span className="block font-mono text-[11px] mt-0.5 truncate">{ep.path}</span>
                       <span className="block text-[10px] text-[#888] mt-1 line-clamp-2">{ep.desc}</span>
                     </button>
