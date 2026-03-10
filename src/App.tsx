@@ -1275,7 +1275,7 @@ function HomePage() {
             </p>
 
             <p className="mt-3 text-xs text-[#6b7280] text-center max-w-xl mx-auto">
-              Pick the plan that fits. Your first 2 months on Pro are on us — then billing starts automatically.
+              
             </p>
 
             {/* Tier cards */}
@@ -1557,16 +1557,6 @@ function AuthPage() {
             </div>
 
             <form className="space-y-4">
-              {isSignup && (
-                <div className="space-y-1.5">
-                  <label className="block text-[12px] font-medium text-[#111827]">Full name</label>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
-                    placeholder="Ada Lovelace"
-                  />
-                </div>
-              )}
               <div className="space-y-1.5">
                 <label className="block text-[12px] font-medium text-[#111827]">Work email</label>
                 <input
@@ -1575,29 +1565,6 @@ function AuthPage() {
                   placeholder="you@fund-or-company.com"
                 />
               </div>
-              {isSignup && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <label className="block text-[12px] font-medium text-[#111827]">Organization</label>
-                    <input
-                      type="text"
-                      className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent"
-                      placeholder="Acme Trading Fund"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="block text-[12px] font-medium text-[#111827]">Role</label>
-                    <select className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-2 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:border-transparent">
-                      <option>Founder</option>
-                      <option>Developer</option>
-                      <option>DFS / Sports analytics</option>
-                      <option>Sports betting</option>
-                      <option>Individual trader</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                </div>
-              )}
               <div className="space-y-1.5">
                 <label className="block text-[12px] font-medium text-[#111827]">Password</label>
                 <input
@@ -1720,10 +1687,10 @@ function App() {
           </div>
         </nav>
 
-        <main className="max-w-6xl mx-auto px-6 py-10 lg:py-14">
-          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start">
+        <main className="max-w-6xl mx-auto px-6 py-10 lg:py-14 lg:h-[calc(100vh-88px)] lg:overflow-hidden">
+          <div className="grid lg:grid-cols-[260px,minmax(0,1fr)] gap-10 items-start lg:h-full">
             {/* Sidebar nav */}
-            <aside className="space-y-6">
+            <aside className="space-y-6 lg:sticky lg:top-4 self-start">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">
                   Getting started
@@ -1778,7 +1745,7 @@ function App() {
             </aside>
 
             {/* Main docs content */}
-            <section className="space-y-12">
+            <section className="space-y-12 lg:h-full lg:overflow-y-auto pr-1 lg:pr-4">
               {/* Intro */}
               <section id="introduction" className="space-y-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280]">
@@ -1808,11 +1775,12 @@ function App() {
               </section>
 
               {/* Auth */}
-              <section id="auth" className="space-y-3">
+              <section id="auth" className="space-y-4">
                 <h2 className="text-xl font-semibold text-[#111827]">Authentication</h2>
-                <p className="text-sm text-[#4b5563]">
-                  All requests use a **Bearer** API key in the <code className="font-mono text-[11px]">Authorization</code> header. You can
-                  create and rotate keys in the MoneyLine dashboard.
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  All requests use a <span className="font-mono text-[11px]">Bearer</span> API key in the{" "}
+                  <code className="font-mono text-[11px]">Authorization</code> header. You can create and rotate keys in the
+                  MoneyLine dashboard.
                 </p>
                 <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
                   <div className="mb-1 text-[11px] text-[#a5b4fc]">curl</div>
@@ -1825,6 +1793,44 @@ function App() {
                 <p className="text-[12px] text-[#6b7280]">
                   Never embed secret keys in client-side code. Backends, CRON jobs, and serverless functions should read keys from
                   environment variables.
+                </p>
+              </section>
+
+              {/* Errors & rate limits */}
+              <section id="errors" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">Errors &amp; rate limits</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  All endpoints use standard HTTP status codes. 2xx responses indicate success, 4xx indicate a problem with the request,
+                  and 5xx indicate a temporary issue on our side.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">Common status codes</p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">400</span> — Invalid parameters (missing <span className="font-mono">sport</span>, bad filter, etc.).</li>
+                    <li><span className="font-mono text-[12px]">401</span> — Missing or invalid API key.</li>
+                    <li><span className="font-mono text-[12px]">403</span> — Key does not have access to this resource or environment.</li>
+                    <li><span className="font-mono text-[12px]">404</span> — Resource not found (unsupported sport, game not tracked).</li>
+                    <li><span className="font-mono text-[12px]">429</span> — You are over your plan&apos;s rate or concurrency limits.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <div className="mb-1 text-[11px] text-[#f97373]">Rate limited example</div>
+                  <pre className="whitespace-pre">
+{`HTTP/1.1 429 Too Many Requests
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1712688000
+Content-Type: application/json
+
+{
+  "error": "rate_limited",
+  "message": "You have exceeded the 60 requests / minute limit for this API key."
+}`}
+                  </pre>
+                </div>
+                <p className="text-[12px] text-[#6b7280]">
+                  We recommend implementing exponential backoff and monitoring the{" "}
+                  <span className="font-mono text-[11px]">X-RateLimit-Remaining</span> header to keep your systems healthy.
                 </p>
               </section>
 
@@ -1908,8 +1914,116 @@ function App() {
                 </div>
               </section>
 
-              {/* Arbitrage, Props, Scores, Stream, Prediction could follow the same pattern; omitted here for brevity in code,
-                  but the schemas and examples are already reflected in the homepage hero and "API at a glance" section. */}
+              {/* Arbitrage */}
+              <section id="arbitrage" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/arbitrage</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Returns cross-book arbitrage opportunities in real time. Each row describes a self-contained position you can place
+                  across two or more books to lock in positive EV regardless of game outcome.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">Query parameters</p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">sports</span> — optional CSV of sports, e.g. <span className="font-mono">'nba,nfl'</span>.</li>
+                    <li><span className="font-mono text-[12px]">min_edge</span> — minimum locked-in return in %, defaults to 1.0.</li>
+                    <li><span className="font-mono text-[12px]">books</span> — limit to a subset of books if you don&apos;t have access to all.</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <pre className="whitespace-pre">
+{`{
+  "meta": { "sports": ["nba"], "min_edge": 1.0, "arbs_returned": 3 },
+  "arbs": [
+    {
+      "description": "LAL @ BOS moneyline 2-way",
+      "legs": [
+        { "book": "draftkings", "outcome": "LAL", "price": 140 },
+        { "book": "pinnacle", "outcome": "BOS", "price": -135 }
+      ],
+      "edge_pct": 1.9,
+      "stake_split": { "LAL": 0.42, "BOS": 0.58 }
+    }
+  ]
+}`}
+                  </pre>
+                </div>
+              </section>
+
+              {/* Props */}
+              <section id="props" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/props/{`{sport}`}</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Returns player markets (points, rebounds, passing yards, etc.) normalized across books. Use this for DFS projections,
+                  pick&apos;em products, and props discovery tools.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">Query parameters</p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">sport</span> — required, e.g. <span className="font-mono">'nba'</span>.</li>
+                    <li><span className="font-mono text-[12px]">player</span> — optional fuzzy match on player name.</li>
+                    <li><span className="font-mono text-[12px]">stat_types</span> — optional CSV of stats, e.g. <span className="font-mono">'points,rebounds,assists'</span>.</li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* Scores */}
+              <section id="scores" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/scores/{`{sport}`}</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Lightweight scoreboard endpoint that mirrors the IDs used in odds and props. Useful for leaderboards, dashboards,
+                  and settlement workflows.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">Query parameters</p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">sport</span> — required.</li>
+                    <li><span className="font-mono text-[12px]">status</span> — <span className="font-mono">scheduled|live|final</span>.</li>
+                    <li><span className="font-mono text-[12px]">date</span> — optional ISO date, defaults to today.</li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* Prediction markets */}
+              <section id="prediction" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">GET /v1/prediction</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Streams Kalshi and Polymarket contracts alongside sportsbook lines so you can compare on-chain and off-chain
+                  pricing for the same events.
+                </p>
+                <div className="rounded-xl bg-white border border-[#e5e7eb] p-4 text-[13px]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7280] mb-2">Query parameters</p>
+                  <ul className="space-y-1.5 text-[13px] text-[#374151]">
+                    <li><span className="font-mono text-[12px]">tags</span> — optional CSV of tags (e.g. <span className="font-mono">'nfl,playoffs'</span>).</li>
+                    <li><span className="font-mono text-[12px]">books</span> — restrict to specific prediction venues.</li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* Streaming */}
+              <section id="stream" className="space-y-4">
+                <h2 className="text-xl font-semibold text-[#111827]">WebSocket /v1/stream</h2>
+                <p className="text-sm text-[#4b5563] max-w-2xl">
+                  Use the stream for sub-100ms line moves without hammering the REST API. The stream delivers the same normalized
+                  schema as <span className="font-mono text-[11px]">/v1/odds</span> but only sends incremental updates.
+                </p>
+                <div className="rounded-xl bg-[#111827] text-[#e5e7eb] border border-[#111827] p-4 text-[12px] font-mono overflow-x-auto">
+                  <pre className="whitespace-pre">
+{`GET wss://api.moneyline.io/v1/stream?channels=odds:nba,ev:nfl
+Authorization: Bearer YOUR_API_KEY
+
+{
+  "type": "odds.update",
+  "channel": "odds:nba",
+  "game_id": "nba_lal_bos_20260309_1930",
+  "markets": {
+    "moneyline": {
+      "home": { "best_price": -110, "best_book": "pinnacle" }
+    }
+  }
+}`}
+                  </pre>
+                </div>
+              </section>
             </section>
           </div>
         </main>
@@ -1920,7 +2034,7 @@ function App() {
   if (pathname.startsWith("/pricing")) {
     return (
       <NavigateContext.Provider value={navigate}>
-      <div className="min-h-screen bg-[#fafafa] text-[#111827]">
+      <div className="min-h-screen bg-[#f5f2eb] text-[#111827]">
         {/* Navigation matching homepage */}
         <nav className="relative z-20 max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
           <a href="/" className="flex items-center gap-0 font-bold text-[#111827] tracking-tight text-lg sm:text-xl no-underline">
@@ -1950,7 +2064,7 @@ function App() {
         </nav>
 
         <main className="relative z-10">
-          <section className="bg-[#fafafa] py-[100px]">
+          <section className="bg-[#f5f2eb] py-[100px]">
             <div className="max-w-6xl mx-auto px-6">
               <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[#111827]">
                 Simple, transparent pricing.
@@ -1960,7 +2074,7 @@ function App() {
               </p>
 
               <p className="mt-3 text-xs text-[#6b7280] text-center max-w-xl mx-auto">
-                Pick the plan that fits. Your first 2 months on Pro are on us — then billing starts automatically.
+                
               </p>
 
               {/* Tier cards reused from homepage */}
