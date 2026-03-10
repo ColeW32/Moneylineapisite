@@ -506,7 +506,7 @@ function HomePage() {
                       key={i}
                       type="button"
                       onClick={() => setHeroEndpointIndex(i)}
-                      className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 pt-3 pb-2.5 text-left transition-colors cursor-pointer ${
+                      className={`flex-shrink-0 w-[152px] sm:w-[160px] snap-start rounded-lg border px-3 pt-3 pb-2.5 text-left transition-colors cursor-pointer first:ml-1 ${
                         heroEndpointIndex === i
                           ? "border-[#1a1a1a] bg-[#1a1a1a] text-white shadow-[0_0_0_2px_#f5f2eb,0_0_0_4px_#1a1a1a]"
                           : "border-[#e0e0e0] bg-white text-[#333] hover:border-[#999]"
